@@ -8,7 +8,9 @@ export const MessagesPage = () => {
 
   return (
     <div className='container'>
+        
         <div className='mt-3 mb-2'>
+        <h1>Talk To Us</h1>
             <nav>
                 <div className='nav nav-tabs' id='nav-tab' role='tablist'>
                     <button onClick={()=>setMessageCLick(false)} className='nav-link active' id='nav-send-message-tab' data-bs-toggle="tab" data-bs-target="#nav-send-message" type='button' role='tab' aria-controls='nav-send-message' aria-selected="true">

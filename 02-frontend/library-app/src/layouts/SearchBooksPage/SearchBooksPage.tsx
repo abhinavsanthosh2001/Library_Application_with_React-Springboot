@@ -3,6 +3,7 @@ import BookModel from "../../models/BookModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
 import { Pagination } from "../Utils/Pagination";
+import { Link } from "react-router-dom";
 
 export const SearchBooksPage = () => {
     const [books, setBooks] = useState<BookModel[]>([]);
@@ -175,7 +176,7 @@ export const SearchBooksPage = () => {
                             <h3>
                                 Can't Find What you are looking for?
                             </h3>
-                            <a type="button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white" href="#">Library Services</a>
+                            <Link type="button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white" to={"/messages"}>Library Services</Link>
                         </div>}
                     {totalPages > 1 &&
                         <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
