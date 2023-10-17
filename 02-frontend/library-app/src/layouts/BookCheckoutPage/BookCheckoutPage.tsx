@@ -196,7 +196,7 @@ const BookCheckoutPage = () => {
             setIsLoadingBook(false);
             sethttpError(error.message);
         })
-    }, [isCheckedOut]);
+    }, [isCheckedOut, isBooked]);
     useEffect(() => {
         const fetchBookReviews = async () => {
             const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
