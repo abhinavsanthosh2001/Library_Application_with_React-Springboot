@@ -145,6 +145,11 @@ public class BookService {
         if (isBooked(userEmail, bookId)){
             throw new Exception("Book Already reserved by user");
         }
+        Optional<Book> book = bookRepo.findById(bookId);
+        if(book.isEmpty() ){
+            throw new Exception("Book not exist");
+        }
+        book.get().setCopiesAvailable(book.get().getCopiesAvailable()-1);
         Reserve reserve = Reserve.builder().bookId(bookId).userEmail(userEmail).reserveDate(LocalDate.now().toString()).build();
         reserveBookRepo.save(reserve);
     }
