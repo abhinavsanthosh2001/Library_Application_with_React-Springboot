@@ -1,6 +1,7 @@
 package com.project.springbootlobrary.controller;
 
 import com.project.springbootlobrary.entities.Book;
+import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import com.project.springbootlobrary.service.BookService;
 import com.project.springbootlobrary.utils.ExtractJWT;
@@ -55,6 +56,22 @@ public class BookController {
         return bookService.currentLoans(userEmail);
     }
 
+    @GetMapping("/secure/isBooked/byUser")
+    public Boolean isBooked(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId)
+            throws ParseException {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return bookService.isBooked(userEmail, bookId);
+    }
 
+    @PostMapping("/secure/Reserve")
+    public void ReserveBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        bookService.reserveBook(userEmail, bookId);
+    }
 
+    @GetMapping("/secure/collectionDate")
+    public CollectionDateResponse getCollectionDate(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) throws ParseException {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return bookService.getCollectionDate(userEmail, bookId);
+    }
 }

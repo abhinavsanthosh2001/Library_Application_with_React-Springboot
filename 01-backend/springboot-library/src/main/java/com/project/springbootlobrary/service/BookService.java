@@ -3,12 +3,16 @@ package com.project.springbootlobrary.service;
 import com.project.springbootlobrary.dao.BookRepo;
 import com.project.springbootlobrary.dao.CheckoutRepo;
 import com.project.springbootlobrary.dao.HistoryRepo;
+import com.project.springbootlobrary.dao.ReserveBookRepo;
 import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.entities.Checkout;
 import com.project.springbootlobrary.entities.History;
+import com.project.springbootlobrary.entities.Reserve;
+import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.type.LocalDateType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 
 @Service
@@ -34,6 +42,9 @@ public class BookService {
 
     @Autowired
     HistoryRepo historyRepo;
+
+    @Autowired
+    ReserveBookRepo reserveBookRepo;
 
     public Book checkoutBook(String userEmail, Long bookId) throws Exception {
         Optional<Book> book = bookRepo.findById(bookId);
@@ -125,4 +136,29 @@ public class BookService {
     }
 
 
+    public Boolean isBooked(String userEmail, Long bookId) {
+        Reserve byUserEmailAndBookId = reserveBookRepo.findByUserEmailAndBookId(userEmail, bookId);
+        return byUserEmailAndBookId !=null;
+    }
+
+    public void reserveBook(String userEmail, Long bookId) throws Exception {
+        if (isBooked(userEmail, bookId)){
+            throw new Exception("Book Already reserved by user");
+        }
+        Reserve reserve = Reserve.builder().bookId(bookId).userEmail(userEmail).reserveDate(LocalDate.now().toString()).build();
+        reserveBookRepo.save(reserve);
+    }
+
+    public CollectionDateResponse getCollectionDate(String userEmail, Long bookId) throws ParseException {
+        Reserve byUserEmailAndBookId = reserveBookRepo.findByUserEmailAndBookId(userEmail, bookId);
+        if (byUserEmailAndBookId != null && byUserEmailAndBookId.getReserveDate()!=null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date reserveDate = sdf.parse(byUserEmailAndBookId.getReserveDate());
+            Date collectionDate = new Date(reserveDate.getTime() + (1000 * 60 * 60 * 24) * 3);
+            LocalDate date = collectionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            return new CollectionDateResponse(date.toString());
+        }
+        return new CollectionDateResponse("");
+    }
 }
