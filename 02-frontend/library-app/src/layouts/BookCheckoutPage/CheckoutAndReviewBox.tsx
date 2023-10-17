@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useOktaAuth } from '@okta/okta-react'
 import { LeaveAReview } from '../Utils/LeaveAReview'
 
-const CheckoutAndReviewBox: React.FC<{submitReview:any ,book: BookModel | undefined, mobile: boolean, currentLoansCount: number, isAutheticated: any, isCheckedOut: boolean, checkoutBook: any, isReviewLeft: boolean}> = (props) => {
+const CheckoutAndReviewBox: React.FC<{submitReview:any, collectionDate: string ,book: BookModel | undefined, mobile: boolean, currentLoansCount: number, isAutheticated: any, isCheckedOut: boolean, reserveBook: any, isReviewLeft: boolean, isBooked: boolean}> = (props) => {
     function reviewRender(){
         if(props.isAutheticated && !props.isReviewLeft){
             return(<p><LeaveAReview submitReview={props.submitReview}/></p>)
@@ -15,14 +15,17 @@ const CheckoutAndReviewBox: React.FC<{submitReview:any ,book: BookModel | undefi
     }
     function buttonRender(){
         if(props.isAutheticated){
-            if(!props.isCheckedOut && props.currentLoansCount < 5){
-                return (<button type='button' className="btn btn-success btn-lg" onClick={() => props.checkoutBook()}>CheckOut</button>)
+            if(!props.isCheckedOut && props.currentLoansCount < 5 && !props.isBooked){
+                return (<button type='button' className="btn btn-success btn-lg" onClick={() => props.reserveBook()}>Reserve Book</button>)
 
             }
             else if(props.isCheckedOut){
                return (<p><b>Book checked Out!!</b></p>)
             }
-            else if(!props.isCheckedOut){
+            else if(props.isBooked){
+                return (<p><b>Book Reserved. Collect the book before {props.collectionDate}</b></p>)
+             }
+            else if(!props.isCheckedOut && !props.isBooked){
                 return (<p className='text-danger'>Checkout limit exceeded</p>)
             }
         }
@@ -45,14 +48,20 @@ const CheckoutAndReviewBox: React.FC<{submitReview:any ,book: BookModel | undefi
                         <h4 className='text-danger'>Wait List</h4>
                     }
                     <p className='col-12 lead'>
+                        {props.book?.copiesAvailable==0?<b> No Copies Available at the moment</b>:
+                        <>
                         <b>{props.book?.copiesAvailable} / </b>
                         <b>{props.book?.copies} </b>
                         copies available
+                        </>
+                        }
+                        
                     </p>
 
 
                 </div>
-                {buttonRender()}
+                {props.book && props.book.copiesAvailable && props.book.copiesAvailable > 0 ?
+                buttonRender():<></>}
                 <hr />
                 <p className='mt-3'>
                     THis Number can change

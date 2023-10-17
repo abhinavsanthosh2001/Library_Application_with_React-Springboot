@@ -4,7 +4,6 @@ import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import { StarReview } from '../Utils/StarReview';
 
 import ReviewModel from '../../models/ReviewModel';
-import { error } from 'console';
 import { LatestReviews } from './LatestReviews';
 import { useOktaAuth } from '@okta/okta-react';
 import CheckoutAndReviewBox from './CheckoutAndReviewBox';
@@ -26,6 +25,10 @@ const BookCheckoutPage = () => {
     const [isReviewLeft, setIsReviewLeft] = useState(false);
     const [isLoadingUserReview, setIsloadingUserReview] = useState(true)
 
+    const [isBooked, setIsBooked] = useState(false);
+    const [isLoadingBooked, setIsLoadingBooked] = useState(true)
+    const [collectionDate, setCollectionDate] = useState("")
+    const [isLoadingCollectionDate, setIsLoadingCollectionDate] = useState(true)
     useEffect(() => {
         const fetchUserReviewBook = async () => {
             if (authState && authState.isAuthenticated) {
@@ -77,6 +80,65 @@ const BookCheckoutPage = () => {
             sethttpError(error.message)
         })
     },[authState])
+
+
+    useEffect(() => {
+        const fetchIsBooked = async ()=>{
+            if (authState && authState.isAuthenticated) {
+                const url = `http://localhost:8080/api/books/secure/isBooked/byUser?bookId=${bookId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        "Content-Type": 'application/json'
+                    }
+                };
+                const booked = await fetch(url, requestOptions);
+                if (!booked.ok) {
+                    throw new Error('Something went wrong!!!')
+                }
+                const bookedJson = await booked.json();
+                setIsBooked(bookedJson);
+
+            }
+            setIsLoadingBooked(false)
+        }
+        fetchIsBooked().catch((error:any)=> {
+            setIsLoadingBooked(false)
+            sethttpError(error.message)
+        })
+    },[authState])
+    useEffect(() => {
+        const fetchCollectionDate = async () => {
+            if (authState && authState.isAuthenticated) {
+                const url = `http://localhost:8080/api/books/secure/collectionDate?bookId=${bookId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        "Content-Type": 'application/json'
+                    }
+                };
+                const collectionDateResponse = await fetch(url, requestOptions);
+                if (!collectionDateResponse.ok) {
+                    throw new Error('Something went wrong!!!')
+                }
+                const collectionDateJson = await collectionDateResponse.json();
+                console.log(collectionDateJson)
+                setCollectionDate(collectionDateJson.collectionDate);
+
+            }
+            setIsLoadingCollectionDate(false)
+
+        }
+        fetchCollectionDate().catch((error: any) => {
+            setIsLoadingCollectionDate(false);
+            sethttpError(error.message);
+        })
+
+
+    }, [authState, isBooked])
+
     useEffect(() => {
         const fetUserCurrentLoansCount = async () => {
             if (authState && authState.isAuthenticated) {
@@ -221,6 +283,22 @@ const BookCheckoutPage = () => {
         setIsCheckedOut(true);
         
     }
+    async function reserveBook() {
+        const url = `http://localhost:8080/api/books/secure/Reserve?bookId=${bookId}`;
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        };
+        const reserveBookResponse = await fetch(url, requestOptions);
+        if (!reserveBookResponse.ok) {
+            throw new Error('Something went wrong!');
+        }
+        setIsBooked(true);
+        
+    }
    
 
 
@@ -247,7 +325,7 @@ const BookCheckoutPage = () => {
                         </div>
                     </div>
 
-                    <CheckoutAndReviewBox submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} checkoutBook={checkout} isReviewLeft={isReviewLeft} />
+                    <CheckoutAndReviewBox collectionDate={collectionDate}  submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isReviewLeft={isReviewLeft} isBooked={isBooked}/>
                 </div>
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
@@ -273,7 +351,7 @@ const BookCheckoutPage = () => {
 
                     </div>
                 </div>
-                <CheckoutAndReviewBox submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} checkoutBook={checkout} isReviewLeft={isReviewLeft}/>
+                <CheckoutAndReviewBox collectionDate={collectionDate} submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isBooked={isBooked} isReviewLeft={isReviewLeft}/>
 
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
