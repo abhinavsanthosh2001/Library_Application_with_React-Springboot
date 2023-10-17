@@ -29,6 +29,8 @@ const BookCheckoutPage = () => {
     const [isLoadingBooked, setIsLoadingBooked] = useState(true)
     const [collectionDate, setCollectionDate] = useState("")
     const [isLoadingCollectionDate, setIsLoadingCollectionDate] = useState(true)
+    const [isBlocked, setIsBlocked] = useState(false)
+    const [isLoadingIsBlocked, setIsLoadingIsBlocked] = useState(true)
     useEffect(() => {
         const fetchUserReviewBook = async () => {
             if (authState && authState.isAuthenticated) {
@@ -105,6 +107,32 @@ const BookCheckoutPage = () => {
         }
         fetchIsBooked().catch((error:any)=> {
             setIsLoadingBooked(false)
+            sethttpError(error.message)
+        })
+    },[authState])
+
+    useEffect(() => {
+        const fetchIsBlocked = async ()=>{
+            if (authState && authState.isAuthenticated) {
+                const url = `http://localhost:8080/api/books/secure/isBlocked/byAdmin?bookId=${bookId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        "Content-Type": 'application/json'
+                    }
+                };
+                const isBlocked = await fetch(url, requestOptions);
+                if (!isBlocked.ok) {
+                    throw new Error('Something went wrong!!!')
+                }
+                const isBLockedJson = await isBlocked.json();
+                setIsBlocked(isBLockedJson);
+                setIsLoadingIsBlocked(false);
+            }
+        }
+        fetchIsBlocked().catch((error:any)=> {
+            // setIsLoadingIsBlocked(false)
             sethttpError(error.message)
         })
     },[authState])
@@ -232,7 +260,7 @@ const BookCheckoutPage = () => {
         })
     }, [isReviewLeft]);
 
-    if (isLoadingBook || isLoadingReview || isLoadingCurrentLoansCount || isLoadingCheckedOut|| isLoadingUserReview ) {
+    if (isLoadingBook || isLoadingReview || isLoadingCurrentLoansCount || isLoadingCheckedOut|| isLoadingUserReview|| isLoadingBooked ||isLoadingCollectionDate ||isLoadingIsBlocked ) {
         return (
             <SpinnerLoading />
         )
@@ -325,7 +353,7 @@ const BookCheckoutPage = () => {
                         </div>
                     </div>
 
-                    <CheckoutAndReviewBox collectionDate={collectionDate}  submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isReviewLeft={isReviewLeft} isBooked={isBooked}/>
+                    <CheckoutAndReviewBox isBlocked={isBlocked} collectionDate={collectionDate}  submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isReviewLeft={isReviewLeft} isBooked={isBooked}/>
                 </div>
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
@@ -351,7 +379,7 @@ const BookCheckoutPage = () => {
 
                     </div>
                 </div>
-                <CheckoutAndReviewBox collectionDate={collectionDate} submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isBooked={isBooked} isReviewLeft={isReviewLeft}/>
+                <CheckoutAndReviewBox isBlocked={isBlocked} collectionDate={collectionDate} submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isBooked={isBooked} isReviewLeft={isReviewLeft}/>
 
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
