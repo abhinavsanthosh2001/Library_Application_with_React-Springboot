@@ -62,6 +62,12 @@ public class BookController {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.isBooked(userEmail, bookId);
     }
+    @GetMapping("/secure/isBlocked/byAdmin")
+    public Boolean isBlocked(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId)
+            throws ParseException, InterruptedException {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return bookService.isBlocked(userEmail, bookId);
+    }
 
     @PostMapping("/secure/Reserve")
     public void ReserveBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {

@@ -12,8 +12,10 @@ import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.type.LocalDateType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 @Service
 @Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
 public class BookService {
     @Autowired
     BookRepo bookRepo;
@@ -138,19 +141,23 @@ public class BookService {
 
     public Boolean isBooked(String userEmail, Long bookId) {
         Reserve byUserEmailAndBookId = reserveBookRepo.findByUserEmailAndBookId(userEmail, bookId);
-        return byUserEmailAndBookId !=null;
+        return byUserEmailAndBookId !=null && !byUserEmailAndBookId.getBlocked();
+    }
+    public Boolean isBlocked(String userEmail, Long bookId) {
+        Reserve byUserEmailAndBookId = reserveBookRepo.findByUserEmailAndBookId(userEmail, bookId);
+        return byUserEmailAndBookId !=null && byUserEmailAndBookId.getBlocked();
     }
 
     public void reserveBook(String userEmail, Long bookId) throws Exception {
-        if (isBooked(userEmail, bookId)){
-            throw new Exception("Book Already reserved by user");
+        if (isBooked(userEmail, bookId) || isBooked(userEmail, bookId)){
+            throw new Exception("Book Already reserved by user or currently blocked by admin");
         }
         Optional<Book> book = bookRepo.findById(bookId);
         if(book.isEmpty() ){
             throw new Exception("Book not exist");
         }
         book.get().setCopiesAvailable(book.get().getCopiesAvailable()-1);
-        Reserve reserve = Reserve.builder().bookId(bookId).userEmail(userEmail).reserveDate(LocalDate.now().toString()).build();
+        Reserve reserve = Reserve.builder().bookId(bookId).userEmail(userEmail).reserveDate(LocalDate.now().toString()).blocked(false).build();
         reserveBookRepo.save(reserve);
     }
 
@@ -165,5 +172,44 @@ public class BookService {
             return new CollectionDateResponse(date.toString());
         }
         return new CollectionDateResponse("");
+    }
+
+    @Scheduled(cron = "1 * * * * MON-FRI")
+    public void deleteBookReserves(){
+        List<Reserve> reserveList = reserveBookRepo.findAll();
+        reserveList.forEach(reserve->{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                LocalDate reserveDate = sdf.parse(reserve.getReserveDate()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate currentDate = LocalDate.now();
+                if (reserve.getBlocked()){
+                    if (currentDate.isAfter(reserveDate.plusDays(10))) {
+                        reserveBookRepo.deleteById(reserve.getId());
+                    }
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+    }
+
+    @Scheduled(cron = "1 * * * * MON-FRI")
+    public void manageBookReserves() {
+        List<Reserve> reserveList = reserveBookRepo.findAll();
+        reserveList.forEach(reserve -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                LocalDate reserveDate = sdf.parse(reserve.getReserveDate()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate currentDate = LocalDate.now();
+                if (!reserve.getBlocked() && currentDate.isAfter(reserveDate.plusDays(3))) {
+                    reserve.setBlocked(true);
+                    reserveBookRepo.save(reserve);
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
     }
 }
