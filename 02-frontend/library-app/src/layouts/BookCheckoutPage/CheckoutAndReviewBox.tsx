@@ -6,9 +6,6 @@ import { LeaveAReview } from '../Utils/LeaveAReview'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip } from 'react-tooltip'
 
-
-
-
 const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, collectionDate: string, book: BookModel | undefined, mobile: boolean, currentLoansCount: number, isAutheticated: any, isCheckedOut: boolean, reserveBook: any, isReviewLeft: boolean, isBooked: boolean }> = (props) => {
     function reviewRender() {
         if (props.isAutheticated && !props.isReviewLeft) {
@@ -20,6 +17,7 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
     }
     function buttonRender() {
         if (props.isAutheticated) {
+            console.log(!props.isCheckedOut, props.currentLoansCount < 5, !props.isBooked, !props.isBlocked)
             if (!props.isCheckedOut && props.currentLoansCount < 5 && !props.isBooked && !props.isBlocked) {
                 return (<button type='button' className="btn btn-success btn-lg" onClick={() => props.reserveBook()}>Reserve Book</button>)
 
@@ -48,7 +46,6 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
 
 
                 </h4>)
-                // return (<p><b>Once you reserve a book, plases come and collect it. On failing to do so, you won't be able to reserve the book for a week. For any queries, please contact by clicking <Link to={"/messages"}>here</Link></b></p>)
             }
             else if (props.isBooked) {
                 return (<p><b>Book Reserved. Collect the book before {props.collectionDate}</b></p>)

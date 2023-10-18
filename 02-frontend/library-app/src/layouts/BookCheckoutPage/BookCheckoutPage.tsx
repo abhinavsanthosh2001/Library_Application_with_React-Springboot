@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState} from 'react'
 import BookModel from '../../models/BookModel';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import { StarReview } from '../Utils/StarReview';
@@ -31,9 +31,11 @@ const BookCheckoutPage = () => {
     const [isLoadingCollectionDate, setIsLoadingCollectionDate] = useState(true)
     const [isBlocked, setIsBlocked] = useState(false)
     const [isLoadingIsBlocked, setIsLoadingIsBlocked] = useState(true)
+
     useEffect(() => {
         const fetchUserReviewBook = async () => {
             if (authState && authState.isAuthenticated) {
+                setIsloadingUserReview(true);
                 const url = `http://localhost:8080/api/reviews/secure/user/book?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'GET',
@@ -56,9 +58,11 @@ const BookCheckoutPage = () => {
             sethttpError(error.message);
         })
     }, [authState]);
+
     useEffect(() => {
         const fetchUserCheckedOut = async ()=>{
             if (authState && authState.isAuthenticated) {
+                setIsLoadingCheckedOut(true)
                 const url = `http://localhost:8080/api/books/secure/ischeckedout/byuser?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'GET',
@@ -87,6 +91,7 @@ const BookCheckoutPage = () => {
     useEffect(() => {
         const fetchIsBooked = async ()=>{
             if (authState && authState.isAuthenticated) {
+                setIsLoadingBooked(true)
                 const url = `http://localhost:8080/api/books/secure/isBooked/byUser?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'GET',
@@ -114,6 +119,7 @@ const BookCheckoutPage = () => {
     useEffect(() => {
         const fetchIsBlocked = async ()=>{
             if (authState && authState.isAuthenticated) {
+                setIsLoadingIsBlocked(true)
                 const url = `http://localhost:8080/api/books/secure/isBlocked/byAdmin?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'GET',
@@ -122,23 +128,26 @@ const BookCheckoutPage = () => {
                         "Content-Type": 'application/json'
                     }
                 };
-                const isBlocked = await fetch(url, requestOptions);
-                if (!isBlocked.ok) {
+                const blocked = await fetch(url, requestOptions);
+                if (!blocked.ok) {
                     throw new Error('Something went wrong!!!')
                 }
-                const isBLockedJson = await isBlocked.json();
+                const isBLockedJson = await blocked.json();
                 setIsBlocked(isBLockedJson);
-                setIsLoadingIsBlocked(false);
+                
             }
+            setIsLoadingIsBlocked(false);
         }
         fetchIsBlocked().catch((error:any)=> {
-            // setIsLoadingIsBlocked(false)
+            setIsLoadingIsBlocked(false)
             sethttpError(error.message)
         })
     },[authState])
+
     useEffect(() => {
         const fetchCollectionDate = async () => {
             if (authState && authState.isAuthenticated) {
+                setIsLoadingCollectionDate(true)
                 const url = `http://localhost:8080/api/books/secure/collectionDate?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'GET',
@@ -170,6 +179,7 @@ const BookCheckoutPage = () => {
     useEffect(() => {
         const fetUserCurrentLoansCount = async () => {
             if (authState && authState.isAuthenticated) {
+                setIsLoadingCurrentLoansCount(true)
                 const url = "http://localhost:8080/api/books/secure/currentloans/count";
                 const requestOptions = {
                     method: 'GET',
@@ -199,6 +209,7 @@ const BookCheckoutPage = () => {
 
     useEffect(() => {
         const fetchBook = async () => {
+            setIsLoadingBook(true)
             const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
             const response = await fetch(baseUrl);
             if (!response.ok) {
@@ -224,9 +235,11 @@ const BookCheckoutPage = () => {
             setIsLoadingBook(false);
             sethttpError(error.message);
         })
-    }, [isCheckedOut, isBooked]);
+    }, [isCheckedOut, isBooked, isBlocked]);
+    
     useEffect(() => {
         const fetchBookReviews = async () => {
+            setIsLoadindReview(true)
             const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
             const responseReview = await fetch(reviewUrl);
             if (!responseReview.ok) {
@@ -293,23 +306,6 @@ const BookCheckoutPage = () => {
             throw new Error('Something went wrong!');
         }
         setIsReviewLeft(true);
-    }
-
-    async function checkout() {
-        const url = `http://localhost:8080/api/books/secure/checkout/?bookId=${book?.id}`;
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        };
-        const checkoutResponse = await fetch(url, requestOptions);
-        if (!checkoutResponse.ok) {
-            throw new Error('Something went wrong!');
-        }
-        setIsCheckedOut(true);
-        
     }
     async function reserveBook() {
         const url = `http://localhost:8080/api/books/secure/Reserve?bookId=${bookId}`;
