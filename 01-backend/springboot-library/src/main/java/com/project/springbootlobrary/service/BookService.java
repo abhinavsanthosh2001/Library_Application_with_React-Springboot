@@ -11,6 +11,7 @@ import com.project.springbootlobrary.entities.Reserve;
 import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import lombok.AccessLevel;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.type.LocalDateType;
@@ -49,24 +50,7 @@ public class BookService {
     @Autowired
     ReserveBookRepo reserveBookRepo;
 
-    public Book checkoutBook(String userEmail, Long bookId) throws Exception {
-        Optional<Book> book = bookRepo.findById(bookId);
-        Checkout checkoutByUser = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
-        if (book.isEmpty() || checkoutByUser != null || book.get().getCopiesAvailable()<=0){
-            throw new Exception("Book Does not exist or already checked out by user");
-        }
-        book.get().setCopiesAvailable(book.get().getCopiesAvailable()-1);
-        bookRepo.save(book.get());
-        Checkout checkout = Checkout.builder()
-                .userEmail(userEmail)
-                .bookId(bookId)
-                .checkoutDate(LocalDate.now().toString())
-                .returnDate(LocalDate.now().plusDays(7).toString())
-                .build();
-        checkoutRepo.save(checkout);
-        return book.get();
 
-    }
 
     public Boolean checkedOutByUser(Long bookId, String userEmail){
         Checkout checkoutByUser = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
