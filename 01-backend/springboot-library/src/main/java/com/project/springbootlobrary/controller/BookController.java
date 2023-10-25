@@ -21,12 +21,6 @@ public class BookController {
     @Autowired
     BookService bookService;
 
-    @PutMapping("/secure/checkout")
-    public Book checkoutBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-        return bookService.checkoutBook(userEmail, bookId);
-    }
-
     @PutMapping("/secure/return")
     public void returnBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");

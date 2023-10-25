@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import BookModel from "../../../models/BookModel"
 
-export const ChangeBook: React.FC<{ book: BookModel ,deleteBook: any,changeQuantity:any}> = (props) => {
-    console.log(props.book.id)
+export const ChangeBook: React.FC<{ book: BookModel, deleteBook: any, changeQuantity: any }> = (props) => {
     return (
         <div className='card mt-3 shadow p-3 mb-3 bg-body rounded'>
             <div className='row g-0'>
@@ -13,7 +12,7 @@ export const ChangeBook: React.FC<{ book: BookModel ,deleteBook: any,changeQuant
                             :
                             <img src={require('./../../../Images/BooksImages/book-luv2code-1000.png')}
                                 width='123' height='196' alt='Default' />
-                        
+
                         }
                     </div>
                     <div className='d-lg-none d-flex justify-content-center 
@@ -31,7 +30,7 @@ export const ChangeBook: React.FC<{ book: BookModel ,deleteBook: any,changeQuant
                     <div className='card-body'>
                         <h5 className='card-title'>
                             {props.book.author}
-                            
+
                         </h5>
                         <h4>
                             {props.book.title}
@@ -54,15 +53,15 @@ export const ChangeBook: React.FC<{ book: BookModel ,deleteBook: any,changeQuant
             </div>
             <div className="row mt-2">
                 <div className="col ">
-                    <button className="btn btn-danger" type="button" onClick={()=> props.deleteBook(props.book.id)}>Delete</button>
+                    <button className="btn btn-danger" type="button" onClick={() => props.deleteBook(props.book.id)}>Delete</button>
                 </div>
             </div>
             <div className="d-grid mt-2">
 
-                <button className="btn btn-primary" type="button" onClick={()=> props.changeQuantity(props.book.id, true)}>Add Quantity</button>
-        {props.book.copiesAvailable! >0 ? <button className="btn btn-warning" type="button" onClick={()=> props.changeQuantity(props.book.id, false)}>Decrease Quantity</button>:<button className="btn btn-warning " disabled type="button" onClick={()=> props.changeQuantity(props.book.id, false)}>Decrease Quantity</button>}
-                    
-        
+                <button className="btn btn-primary" type="button" onClick={() => props.changeQuantity(props.book.id, true)}>Add Quantity</button>
+                {props.book.copiesAvailable! > 0 ? <button className="btn btn-warning" type="button" onClick={() => props.changeQuantity(props.book.id, false)}>Decrease Quantity</button> : <button className="btn btn-warning " disabled type="button" onClick={() => props.changeQuantity(props.book.id, false)}>Decrease Quantity</button>}
+
+
             </div>
 
         </div>
