@@ -66,6 +66,15 @@ public class AdminController {
         }
         return adminService.checkoutBook(userEmail, bookId);
     }
+    @PutMapping("/secure/checkout/bulk")
+    public void bulkCheckout(@RequestHeader(value = "Authorization") String token,@RequestBody List<Long> bookIds, @RequestParam String userEmail) throws Exception{
+        String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
+        if(admin == null || !admin.equals("admin")){
+            throw new Exception("Administration page only.");
+
+        }
+        adminService.checkoutBooks(userEmail, bookIds);
+    }
 
     @GetMapping("/secure/getReserves")
     public List<CheckoutResponse> getReservedBooks(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {

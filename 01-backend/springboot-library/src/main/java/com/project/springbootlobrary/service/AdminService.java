@@ -129,4 +129,17 @@ public class AdminService {
         }
     }
 
+    public void checkoutBooks(String userEmail, List<Long> bookIds) throws Exception {
+        long count = checkoutRepo.findBooksByUserEmail(userEmail).size();
+        if (count+bookIds.size()>5){
+            throw new Exception("Checkout Limit Exceeded");
+        }
+        bookIds.forEach(bookId->{
+            try {
+                checkoutBook(userEmail, bookId);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }

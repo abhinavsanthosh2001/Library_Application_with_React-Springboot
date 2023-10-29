@@ -196,4 +196,9 @@ public class BookService {
 
         });
     }
+
+    public int getReserveCountByUser(String userEmail) {
+        return reserveBookRepo.countByUserEmail(userEmail);
+
+    }
 }

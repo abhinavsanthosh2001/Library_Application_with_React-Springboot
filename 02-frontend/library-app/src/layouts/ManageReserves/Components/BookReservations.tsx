@@ -1,21 +1,55 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState, useEffect } from "react";
-import BookModel from "../../../models/BookModel";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 
 
 export const BookReservations = () => {
-    const [books, setBooks] = useState<BookModel[]>([]);
+    const { authState } = useOktaAuth();
+    const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
     const [search, setSearch] = useState("");
-    const { authState } = useOktaAuth();
     const [flag, setFlag] = useState(false);
     const [initialRender, setInitialRender] = useState(true)
+    const [warn, setWarn] = useState(false)
+    const [checkoutBooks, setCheckoutBooks] = useState<number[]>([])
+    const [checkedSelectAll, setCheckedSelectAll] = useState(false)
+    const [warnBooks, setWarnBooks] = useState(false)
+    const [success, setSuccess] = useState(false)
 
+
+    function handleCheck(bookId: number) {
+        return checkoutBooks.includes(bookId)
+    }
+
+    function handleSelectAll(add: boolean) {
+        setCheckedSelectAll(!checkedSelectAll)
+        if (add) {
+            let c: (number)[] = []
+            books.map(book => {
+                c.push(book.bookId!)
+            })
+            setCheckoutBooks(c)
+        } else {
+
+        }
+    }
+    function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
+        setCheckedSelectAll(false)
+        if (checked) {
+            let c = checkoutBooks
+            c.push(book.bookId!)
+            setCheckoutBooks(c)
+        } else {
+            let c = checkoutBooks
+            c.splice(c.indexOf(book.bookId!), 1)
+            setCheckoutBooks(c)
+        }
+
+    }
     function changeFlag() {
         setFlag(!flag);
     }
@@ -34,77 +68,121 @@ export const BookReservations = () => {
 
                 return (<>
                     <div className='mt-3'>
-                        <h5>Number of results: ({totalAmountOfBooks})</h5>
+                        <h5>Number of reservations: ({totalAmountOfBooks})</h5>
+                    </div>
+                    {
+                        warnBooks &&
+                        <div className='alert alert-danger' role='alert'>
+                            Select at least one book
+                        </div>
+
+                    }
+                    {
+                        success &&
+                        <div className='alert alert-success' role='alert'>
+                            Success
+                        </div>
+                    }
+                    <div className="p-2 m-1 align-self-center">
+                        <div className="form-check checkbox-xl">
+                            select all
+                            <input
+                                checked={checkedSelectAll} className="form-check-input" type="checkbox" id="selectAll" onChange={(e) => handleSelectAll(e.target.checked)} />
+                        </div>
+                    </div>
+                    <div className="d-flex">
+                        <div className="p-2">
+                            <button className='btn btn-success'
+                                onClick={() => checkoutAll(checkoutBooks)}
+                            >
+                                Checkout book(s)
+                            </button>
+
+                        </div>
                     </div>
                     {books.map(book => (
-
-                        <BookReservation book={book} key={book.id} checkout={checkout} deleteReserve={deleteReserve} />
+                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
             else {
                 return (<div className="m-5">
+                    {
+                        success &&
+                        <div className='alert alert-success' role='alert'>
+                            Success
+                        </div>
+                    }
                     <h3>
                         No reservations found are linked with this email.
                     </h3>
+                    
                 </div>)
             }
         }
 
     }
     useEffect(() => {
+        // setSuccess(false)
         if (initialRender) {
             setInitialRender(false)
         }
         else {
+            if (search != "") {
+                const fetchBooks = async () => {
+                    setIsLoading(true)
+                    const url: string = `http://localhost:8080/api/admin/secure/getReserves?userEmail=${search}`;
 
-            const fetchBooks = async () => {
-                setIsLoading(true)
-                const url: string = `http://localhost:8080/api/admin/secure/getReserves?userEmail=${search}`;
+                    if (authState && authState?.isAuthenticated) {
 
-                if (authState && authState?.isAuthenticated) {
-
-                    const options = {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                            'Content-Type': 'application/json'
+                        const options = {
+                            method: "GET",
+                            headers: {
+                                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                                'Content-Type': 'application/json'
+                            }
+                        };
+                        const response = await fetch(url, options);
+                        if (!response.ok) {
+                            throw new Error("Something went wrong");
                         }
-                    };
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error("Something went wrong");
+                        const responseData = await response.json();
+
+                        setTotalAmountOfBooks(Object.keys(responseData).length)
+
+                        const loadedBooks: CheckoutResponse[] = [];
+                        for (const key in responseData) {
+                            loadedBooks.push({
+                                bookId: responseData[key].bookId,
+                                title: responseData[key].title,
+                                author: responseData[key].author,
+                                img: responseData[key].img,
+                                email: responseData[key].userEmail,
+                                reservationDate: responseData[key].reservationDate
+                            })
+                        }
+                        setBooks(loadedBooks);
+
                     }
-                    const responseData = await response.json();
-
-                    setTotalAmountOfBooks(Object.keys(responseData).length)
-
-                    const loadedBooks: CheckoutResponse[] = [];
-                    for (const key in responseData) {
-                        loadedBooks.push({
-                            bookId: responseData[key].bookId,
-                            title: responseData[key].title,
-                            author: responseData[key].author,
-                            img: responseData[key].img,
-                            email: responseData[key].userEmail,
-                            reservationDate: responseData[key].reservationDate
-                        })
-                    }
-                    setBooks(loadedBooks);
-
-                }
-                setIsLoading(false);
-            };
-            fetchBooks().catch((error: any) => {
-                setIsLoading(false);
-                sethttpError(error.message);
-            })
+                    setIsLoading(false);
+                    setWarn(false)
+                };
+                fetchBooks().catch((error: any) => {
+                    setIsLoading(false);
+                    sethttpError(error.message);
+                })
+            }
+            else {
+                setWarn(true)
+                setTotalAmountOfBooks(-1)
+            }
         }
 
     }, [flag]);
 
     async function checkout(bookId: number) {
         setIsLoading(true)
+        setSuccess(false)
         if (authState && authState?.isAuthenticated) {
             const url = `http://localhost:8080/api/admin/secure/checkout?userEmail=${search}&bookId=${bookId}`
             const options = {
@@ -121,12 +199,47 @@ export const BookReservations = () => {
                 throw new Error("Something went wrong");
             }
             setFlag(!flag);
+            setSuccess(true)
+        }
+        setIsLoading(false)
+    }
+
+    async function checkoutAll(bookIds: number[]) {
+        setSuccess(false)
+        setIsLoading(true)
+        if (bookIds.length == 0) {
+            setWarnBooks(true)
+        }
+        else {
+            setWarnBooks(false)
+            if (authState && authState?.isAuthenticated) {
+                const url = `http://localhost:8080/api/admin/secure/checkout/bulk?userEmail=${search}`
+                const options = {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookIds)
+                };
+
+                const postMessage = await fetch(url, options);
+
+                if (!postMessage.ok) {
+                    throw new Error("Something went wrong");
+                }
+                setSuccess(true)
+                setFlag(!flag);
+            }
+
         }
         setIsLoading(false)
     }
 
     async function deleteReserve(bookId: number) {
         setIsLoading(true)
+        setSuccess(false)
+
         if (authState && authState?.isAuthenticated) {
             const url = `http://localhost:8080/api/admin/secure/deleteReserve?userEmail=${search}&bookId=${bookId}`
             const options = {
@@ -143,6 +256,8 @@ export const BookReservations = () => {
                 throw new Error("Something went wrong");
             }
             setFlag(!flag);
+            setSuccess(true)
+
         }
         setIsLoading(false)
     }
@@ -165,20 +280,35 @@ export const BookReservations = () => {
     return (
         <>
             <div className='row mt-5'>
+                {
+                    warn &&
+                    <div className='alert alert-danger' role='alert'>
+                        All fields must be filled out
+                    </div>
+
+                }
                 <div className='col-6'>
+
                     <div className='d-flex'>
-                        <input className='form-control me-2' required type='search'
+
+                        <input className='form-control me-2' type='search'
+
                             placeholder='Search' aria-labelledby='Search'
-                            onChange={e => setSearch(e.target.value)}
+                            required onChange={e => setSearch(e.target.value)}
+                            value={search}
                         />
                         <button className='btn btn-outline-success'
                             onClick={() => changeFlag()}>
                             Search
                         </button>
+
                     </div>
                 </div>
             </div>
+
             {method()}
+
+
 
         </>
     )

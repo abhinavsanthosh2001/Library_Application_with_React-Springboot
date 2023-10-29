@@ -12,5 +12,6 @@ public interface ReserveBookRepo extends JpaRepository<Reserve, Long> {
 
     Reserve findByUserEmailAndBookId(String userEmail, Long bookId);
     List<Reserve> findByUserEmail(String userEmail);
+    int countByUserEmail(String userEmail);
 
 }
