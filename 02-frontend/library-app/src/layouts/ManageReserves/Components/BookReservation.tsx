@@ -1,13 +1,10 @@
-import { useState } from "react";
-import BookModel from "../../../models/BookModel";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 
 
 export const BookReservation: React.FC<{handleCheck: any, addBookToCheckout: any, book: CheckoutResponse, checkout: any, deleteReserve: any }> = (props) => {
-    const [checked, setChecked] = useState(false)
     
     return (
-        <div className='mt-1 shadow p-3 mb-1 bg-body' onClick={() => setChecked(!checked)}>
+        <div className='mt-1 shadow p-3 mb-1 bg-body'>
             <div className='d-none d-lg-block'>
                 <div onClick={props.handleCheck}className='d-flex  bd-highlight '>
                     <div className="p-2 m-1 align-self-center">

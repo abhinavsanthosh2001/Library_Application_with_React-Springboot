@@ -123,7 +123,6 @@ export const BookReservations = () => {
 
     }
     useEffect(() => {
-        // setSuccess(false)
         if (initialRender) {
             setInitialRender(false)
         }
@@ -303,6 +302,9 @@ export const BookReservations = () => {
                         </button>
 
                     </div>
+                </div>
+                <div className="col-6">
+                    
                 </div>
             </div>
 
