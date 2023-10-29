@@ -31,6 +31,8 @@ const BookCheckoutPage = () => {
     const [isLoadingCollectionDate, setIsLoadingCollectionDate] = useState(true)
     const [isBlocked, setIsBlocked] = useState(false)
     const [isLoadingIsBlocked, setIsLoadingIsBlocked] = useState(true)
+    const [isLoadingIsReservesCount, setIsLoadingIsReservesCount] = useState(true)
+    const [reserveCount, setReserveCount] = useState(0)
 
     useEffect(() => {
         const fetchUserReviewBook = async () => {
@@ -208,6 +210,37 @@ const BookCheckoutPage = () => {
     }, [authState, isCheckedOut])
 
     useEffect(() => {
+        const fetUserCurrentReserves = async () => {
+            if (authState && authState.isAuthenticated) {
+                setIsLoadingIsReservesCount(true)
+                const url = "http://localhost:8080/api/books/secure/reserveCount/count";
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        "Content-Type": 'application/json'
+                    }
+                };
+                const currentLoansCountResponse = await fetch(url, requestOptions);
+                if (!currentLoansCountResponse.ok) {
+                    throw new Error('Something went wrong!!!')
+                }
+                const userReserveCount = await currentLoansCountResponse.json();
+                setReserveCount(userReserveCount);
+
+            }
+            setIsLoadingIsReservesCount(false)
+
+        }
+        fetUserCurrentReserves().catch((error: any) => {
+            setIsLoadingIsReservesCount(false);
+            sethttpError(error.message);
+        })
+
+
+    }, [authState, isBooked])
+
+    useEffect(() => {
         const fetchBook = async () => {
             setIsLoadingBook(true)
             const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
@@ -349,7 +382,7 @@ const BookCheckoutPage = () => {
                         </div>
                     </div>
 
-                    <CheckoutAndReviewBox isBlocked={isBlocked} collectionDate={collectionDate}  submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isReviewLeft={isReviewLeft} isBooked={isBooked}/>
+                    <CheckoutAndReviewBox isReservedLimitExceeded={reserveCount} isBlocked={isBlocked} collectionDate={collectionDate}  submitReview={submitReview} book={book} mobile={false} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isReviewLeft={isReviewLeft} isBooked={isBooked}/>
                 </div>
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
@@ -375,7 +408,7 @@ const BookCheckoutPage = () => {
 
                     </div>
                 </div>
-                <CheckoutAndReviewBox isBlocked={isBlocked} collectionDate={collectionDate} submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isBooked={isBooked} isReviewLeft={isReviewLeft}/>
+                <CheckoutAndReviewBox isReservedLimitExceeded={reserveCount} isBlocked={isBlocked} collectionDate={collectionDate} submitReview={submitReview} book={book} mobile={true} currentLoansCount={currentLoansCount} isAutheticated={authState?.isAuthenticated} isCheckedOut={isCheckedOut} reserveBook={reserveBook} isBooked={isBooked} isReviewLeft={isReviewLeft}/>
 
                 <hr />
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />

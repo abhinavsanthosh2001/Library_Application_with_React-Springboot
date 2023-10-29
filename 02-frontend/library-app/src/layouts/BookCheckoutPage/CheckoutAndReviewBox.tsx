@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import BookModel from '../../models/BookModel'
 import { Link } from 'react-router-dom'
-import { useOktaAuth } from '@okta/okta-react'
 import { LeaveAReview } from '../Utils/LeaveAReview'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip } from 'react-tooltip'
 
-const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, collectionDate: string, book: BookModel | undefined, mobile: boolean, currentLoansCount: number, isAutheticated: any, isCheckedOut: boolean, reserveBook: any, isReviewLeft: boolean, isBooked: boolean }> = (props) => {
+const CheckoutAndReviewBox: React.FC<{ isReservedLimitExceeded: any, submitReview: any, isBlocked: boolean, collectionDate: string, book: BookModel | undefined, mobile: boolean, currentLoansCount: number, isAutheticated: any, isCheckedOut: boolean, reserveBook: any, isReviewLeft: boolean, isBooked: boolean }> = (props) => {
     function reviewRender() {
         if (props.isAutheticated && !props.isReviewLeft) {
             return (<p><LeaveAReview submitReview={props.submitReview} /></p>)
@@ -17,8 +16,7 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
     }
     function buttonRender() {
         if (props.isAutheticated) {
-            console.log(!props.isCheckedOut, props.currentLoansCount < 5, !props.isBooked, !props.isBlocked)
-            if (!props.isCheckedOut && props.currentLoansCount < 5 && !props.isBooked && !props.isBlocked) {
+            if (!props.isCheckedOut && props.currentLoansCount < 5 && !props.isBooked && !props.isBlocked && props.isReservedLimitExceeded<5) {
                 return (<button type='button' className="btn btn-success btn-lg" onClick={() => props.reserveBook()}>Reserve Book</button>)
 
             }
@@ -50,8 +48,11 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
             else if (props.isBooked) {
                 return (<p><b>Book Reserved. Collect the book before {props.collectionDate}</b></p>)
             }
-            else if (!props.isCheckedOut && !props.isBooked) {
+            else if (!props.isCheckedOut && !props.isBooked && props.currentLoansCount >= 5) {
                 return (<p className='text-danger'>Checkout limit exceeded</p>)
+            }
+            else if (props.isReservedLimitExceeded >= 5) {
+                return (<p className='text-danger'>Reserve limit exceeded</p>)
             }
         }
         return (<Link to="/login" className="btn btn-success btn-lg">Sign In</Link>)
@@ -62,10 +63,20 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
         <div className={props.mobile ? 'card d-flex mt-5' : "card col-3 container d-flex mb-5"}>
             <div className='card-body container'>
                 <div className='mt-3'>
-                    <p>
-                        <b>{props.currentLoansCount}/5 </b>
-                        books checked out
-                    </p>
+                    <div className='row'>
+                        <p>
+                            books checked out
+                            <b> {props.currentLoansCount}/5 </b>
+                        </p>
+                    </div>
+                    <div className='row'>
+                        <p>
+                            reserve count
+                            <b> {props.isReservedLimitExceeded}/5 </b>
+                        </p>
+                        
+                    </div>
+
                     <hr />
                     {props.book && props.book.copiesAvailable && props.book.copiesAvailable > 0 ?
                         <h4 className='text-success'>Available</h4>
@@ -95,7 +106,7 @@ const CheckoutAndReviewBox: React.FC<{ submitReview: any, isBlocked: boolean, co
 
             </div>
 
-        </div>
+        </div >
     )
 }
 export default CheckoutAndReviewBox

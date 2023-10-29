@@ -1,7 +1,6 @@
 import { useOktaAuth } from '@okta/okta-react'
 import React, { useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { AddNewBook } from '../ManageLibraryPage/components/AddNewBook'
 import { BookReservations } from './Components/BookReservations'
 
 
@@ -9,12 +8,16 @@ import { BookReservations } from './Components/BookReservations'
 export const ManageReserves = () => {
   const { authState } = useOktaAuth()
   const [newFeature, setNewFeature] = useState(true)
-  function addBookClickFunction() {
+  const [checkout, setCheckout] = useState(true)
+  function checkoutFunction() {
     setNewFeature(false)
+    setCheckout(true)
   }
-  function changeBooksClickFunction() {
+  function returnsAndLoansFunction() {
     setNewFeature(true)
+    setCheckout(false)
   }
+
   if (authState?.accessToken?.claims.userType == undefined) {
     return <Redirect to='/home' />
   }
@@ -25,10 +28,10 @@ export const ManageReserves = () => {
         <nav className='mt-3'>
 
           <div className='nav nav-tabs' id='nav-tab' role='tablist'>
-            <button onClick={() => changeBooksClickFunction()} className='nav-link active' id='nav-quantity-tab' data-bs-toggle="tab" data-bs-target="#nav-quantity" type='button' role='tab' aria-controls='nav-quantity' aria-selected="false">
+            <button onClick={() => checkoutFunction()} className='nav-link active' id='nav-quantity-tab' data-bs-toggle="tab" data-bs-target="#nav-quantity" type='button' role='tab' aria-controls='nav-quantity' aria-selected="false">
               Manage Reservations
             </button>
-            <button onClick={() => addBookClickFunction()} className='nav-link ' id='nav-add-book-tab' data-bs-toggle="tab" data-bs-target="#nav-add-book" type='button' role='tab' aria-controls='nav-add-book' aria-selected="false">
+            <button onClick={() => returnsAndLoansFunction()} className='nav-link ' id='nav-add-book-tab' data-bs-toggle="tab" data-bs-target="#nav-add-book" type='button' role='tab' aria-controls='nav-add-book' aria-selected="false">
               Add New Feature!
             </button>
 
@@ -38,10 +41,11 @@ export const ManageReserves = () => {
         <div className='tab-content' id='nav-tabContent'>
           <div className='tab-pane fade ' id='nav-add-book' role='tabpanel' aria-labelledby='nav-add-book-tab'>
             <></>
+
           </div>
 
           <div className='tab-pane fade show active' id='nav-quantity' role='tabpanel' aria-labelledby='nav-quantity-tab'>
-            {newFeature && <BookReservations />}
+            {checkout && <BookReservations />}
 
           </div>
         </div>

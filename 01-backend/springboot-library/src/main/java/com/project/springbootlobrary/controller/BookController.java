@@ -42,6 +42,11 @@ public class BookController {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return  bookService.getBookCountByUser(userEmail);
     }
+    @GetMapping("/secure/reserveCount/count")
+    public int getReserveCount(@RequestHeader(value = "Authorization") String token){
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return  bookService.getReserveCountByUser(userEmail);
+    }
 
     @GetMapping("/secure/currentloans")
     public List<ShelfCurrentLoansResponse> currentLoans(@RequestHeader(value = "Authorization") String token)
