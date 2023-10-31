@@ -4,6 +4,7 @@ package com.project.springbootlobrary.controller;
 import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.requestModels.AddBookRequest;
 import com.project.springbootlobrary.responseModels.CheckoutResponse;
+import com.project.springbootlobrary.responseModels.UserCard;
 import com.project.springbootlobrary.service.AdminService;
 import com.project.springbootlobrary.service.BookService;
 import com.project.springbootlobrary.utils.ExtractJWT;
@@ -84,6 +85,15 @@ public class AdminController {
 
         }
         return adminService.getReservesByEmail(userEmail);
+    }
+    @GetMapping("/secure/getUserData")
+    public UserCard getUserData(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
+        String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
+        if(admin == null || !admin.equals("admin")){
+            throw new Exception("Administration page only.");
+
+        }
+        return adminService.getUserDetails(userEmail);
     }
 
     @DeleteMapping("secure/deleteReserve")

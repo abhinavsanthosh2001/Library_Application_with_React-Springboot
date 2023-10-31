@@ -184,7 +184,8 @@ public class BookService {
         reserveList.forEach(reserve -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             try {
-                LocalDate reserveDate = sdf.parse(reserve.getReserveDate()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate reserveDate = sdf.parse(reserve.getReserveDate()).toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate();
                 LocalDate currentDate = LocalDate.now();
                 if (!reserve.getBlocked() && currentDate.isAfter(reserveDate.plusDays(3))) {
                     reserve.setBlocked(true);
@@ -193,7 +194,6 @@ public class BookService {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-
         });
     }
 

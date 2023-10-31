@@ -2,12 +2,14 @@ package com.project.springbootlobrary.service;
 
 import com.project.springbootlobrary.dao.BookRepo;
 import com.project.springbootlobrary.dao.CheckoutRepo;
+import com.project.springbootlobrary.dao.HistoryRepo;
 import com.project.springbootlobrary.dao.ReserveBookRepo;
 import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.entities.Checkout;
 import com.project.springbootlobrary.entities.Reserve;
 import com.project.springbootlobrary.requestModels.AddBookRequest;
 import com.project.springbootlobrary.responseModels.CheckoutResponse;
+import com.project.springbootlobrary.responseModels.UserCard;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,8 @@ public class AdminService {
 
     @Autowired
     ReserveBookRepo reserveBookRepo;
+    @Autowired
+    HistoryRepo historyRepo;
 
     public void postBook(AddBookRequest addBookRequest){
         Book book = Book.builder()
@@ -141,5 +145,17 @@ public class AdminService {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public UserCard getUserDetails(String userEmail) {
+        int countCheckoutsByUserEmail = checkoutRepo.findBooksByUserEmail(userEmail).size();
+        int countHistoryByUserEmail = historyRepo.countByUserEmail(userEmail);
+        int countReservationsByUserEmail = reserveBookRepo.countByUserEmail(userEmail);
+        return UserCard.builder()
+                .userEmail(userEmail)
+                .reservedBooks(countReservationsByUserEmail)
+                .checkedoutBooks(countCheckoutsByUserEmail)
+                .historyCount(countHistoryByUserEmail)
+                .build();
     }
 }

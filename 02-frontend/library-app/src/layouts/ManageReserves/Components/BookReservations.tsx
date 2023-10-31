@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
+import { UserCard } from "./UserCard";
+import UserCardModel from "../../../models/UserCardModel";
 
 
 export const BookReservations = () => {
@@ -19,6 +21,8 @@ export const BookReservations = () => {
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [userData, setUserData] = useState<UserCardModel>()
+    const [userFlag, setUserFlag] = useState(false)
 
 
     function handleCheck(bookId: number) {
@@ -34,8 +38,9 @@ export const BookReservations = () => {
             })
             setCheckoutBooks(c)
         } else {
-
+            setCheckoutBooks([])
         }
+        console.log(checkoutBooks)
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
         setCheckedSelectAll(false)
@@ -48,10 +53,12 @@ export const BookReservations = () => {
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
         }
+        console.log(checkoutBooks)
 
     }
     function changeFlag() {
         setFlag(!flag);
+        setUserFlag(!userFlag)
     }
 
     function method() {
@@ -67,63 +74,74 @@ export const BookReservations = () => {
             if (totalAmountOfBooks > 0) {
 
                 return (<>
-                    <div className='mt-3'>
-                        <h5>Number of reservations: ({totalAmountOfBooks})</h5>
-                    </div>
-                    {
-                        warnBooks &&
-                        <div className='alert alert-danger' role='alert'>
-                            Select at least one book
-                        </div>
-
-                    }
-                    {
-                        success &&
-                        <div className='alert alert-success' role='alert'>
-                            Success
-                        </div>
-                    }
-                    <div className="p-2 m-1 align-self-center">
-                        <div className="form-check checkbox-xl">
-                            select all
-                            <input
-                                checked={checkedSelectAll} className="form-check-input" type="checkbox" id="selectAll" onChange={(e) => handleSelectAll(e.target.checked)} />
-                        </div>
-                    </div>
-                    <div className="d-flex">
-                        <div className="p-2">
-                            <button className='btn btn-success'
-                                onClick={() => checkoutAll(checkoutBooks)}
-                            >
-                                Checkout book(s)
-                            </button>
-
-                        </div>
-                    </div>
                     {books.map(book => (
                         <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
-            else {
-                return (<div className="m-5">
-                    {
-                        success &&
-                        <div className='alert alert-success' role='alert'>
-                            Success
-                        </div>
-                    }
-                    <h3>
-                        No reservations found are linked with this email.
-                    </h3>
-                    
-                </div>)
-            }
+            
+        }
+
+    }
+    function method2() {
+
+        if (totalAmountOfBooks > 0) {
+
+            return (<>
+                <div className='mt-3'>
+                    <h5>Number of reservations: ({totalAmountOfBooks})</h5>
+                </div>
+                {
+                    warnBooks &&
+                    <div className='alert alert-danger' role='alert'>
+                        Select at least one book
+                    </div>
+
+                }
+                {
+                    success &&
+                    <div className='alert alert-success' role='alert'>
+                        Success
+                    </div>
+                }
+                <div className="p-2 m-1 align-self-center">
+                    <div className="form-check checkbox-xl">
+                        select all
+                        <input
+                            checked={checkedSelectAll} className="form-check-input" type="checkbox" id="selectAll" onChange={(e) => handleSelectAll(e.target.checked)} />
+                    </div>
+                </div>
+                <div className="d-flex">
+                    <div className="p-2">
+                        <button className='btn btn-success'
+                            onClick={() => checkoutAll(checkoutBooks)}
+                        >
+                            Checkout book(s)
+                        </button>
+
+                    </div>
+                </div>
+               
+            </>)
+        }
+        else if(totalAmountOfBooks==0) {
+            return (<div className="m-5">
+                {
+                    success &&
+                    <div className='alert alert-success' role='alert'>
+                        Success
+                    </div>
+                }
+                <h3>
+                    No reservations found are linked with this email.
+                </h3>
+
+            </div>)
+
         }
 
     }
     useEffect(() => {
-        // setSuccess(false)
         if (initialRender) {
             setInitialRender(false)
         }
@@ -200,6 +218,7 @@ export const BookReservations = () => {
             }
             setFlag(!flag);
             setSuccess(true)
+            setWarnBooks(false)
         }
         setIsLoading(false)
     }
@@ -257,10 +276,53 @@ export const BookReservations = () => {
             }
             setFlag(!flag);
             setSuccess(true)
-
+            setWarnBooks(false)
         }
         setIsLoading(false)
     }
+
+    useEffect(() => {
+
+        if (search != "") {
+            const fetchBooks = async () => {
+                setIsLoading(true)
+                const url: string = `http://localhost:8080/api/admin/secure/getUserData?userEmail=${search}`;
+
+                if (authState && authState?.isAuthenticated) {
+
+                    const options = {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    };
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error("Something went wrong");
+                    }
+                    const responseData = await response.json();
+                    const loadedBook: UserCardModel = {
+                        userEmail: responseData.userEmail,
+                        checkedoutBooks: responseData.checkedoutBooks,
+                        historyCount: responseData.historyCount,
+                        reservedBooks: responseData.reservedBooks
+                    }
+
+
+                    setUserData(loadedBook);
+
+                }
+                setIsLoading(false);
+                setWarn(false)
+            };
+            fetchBooks().catch((error: any) => {
+                setIsLoading(false);
+                sethttpError(error.message);
+            })
+        }
+
+    }, [userFlag]);
 
     if (isLoading) {
         return (
@@ -303,7 +365,12 @@ export const BookReservations = () => {
                         </button>
 
                     </div>
+                    {method2()}
                 </div>
+                {userData && <div className="col-4 offset-2">
+                    <UserCard userDeatils={userData}></UserCard>
+                </div>}
+
             </div>
 
             {method()}
