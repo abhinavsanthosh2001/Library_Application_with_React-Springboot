@@ -6,7 +6,7 @@ export const BookReservation: React.FC<{handleCheck: any, addBookToCheckout: any
     return (
         <div className='mt-1 shadow p-3 mb-1 bg-body'>
             <div className='d-none d-lg-block'>
-                <div onClick={props.handleCheck}className='d-flex  bd-highlight '>
+                <div className='d-flex  bd-highlight '>
                     <div className="p-2 m-1 align-self-center">
                         <div className="form-check checkbox-xl">
                             <input checked={props.handleCheck(props.book.bookId!)} onChange={(e) => props.addBookToCheckout(props.book, e.target.checked)} className="form-check-input" type="checkbox" id={props.book.bookId?.toString()} />

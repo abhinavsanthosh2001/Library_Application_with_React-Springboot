@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
+import { UserCard } from "./UserCard";
+import UserCardModel from "../../../models/UserCardModel";
 
 
 export const BookReservations = () => {
@@ -19,6 +21,8 @@ export const BookReservations = () => {
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [userData, setUserData] = useState<UserCardModel>()
+    const [userFlag, setUserFlag] = useState(false)
 
 
     function handleCheck(bookId: number) {
@@ -52,6 +56,7 @@ export const BookReservations = () => {
     }
     function changeFlag() {
         setFlag(!flag);
+        setUserFlag(!userFlag)
     }
 
     function method() {
@@ -116,7 +121,7 @@ export const BookReservations = () => {
                     <h3>
                         No reservations found are linked with this email.
                     </h3>
-                    
+
                 </div>)
             }
         }
@@ -261,6 +266,50 @@ export const BookReservations = () => {
         setIsLoading(false)
     }
 
+    useEffect(() => {
+
+        if (search != "") {
+            const fetchBooks = async () => {
+                setIsLoading(true)
+                const url: string = `http://localhost:8080/api/admin/secure/getUserData?userEmail=${search}`;
+
+                if (authState && authState?.isAuthenticated) {
+
+                    const options = {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    };
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error("Something went wrong");
+                    }
+                    const responseData = await response.json();
+                    const loadedBook: UserCardModel = {
+                        userEmail: responseData.userEmail,
+                        checkedoutBooks: responseData.checkedoutBooks,
+                        historyCount: responseData.reservedBooks,
+                        reservedBooks: responseData.historyCount
+                    }
+
+
+                    setUserData(loadedBook);
+                    console.log(loadedBook);
+
+                }
+                setIsLoading(false);
+                setWarn(false)
+            };
+            fetchBooks().catch((error: any) => {
+                setIsLoading(false);
+                sethttpError(error.message);
+            })
+        }
+
+    }, [userFlag]);
+
     if (isLoading) {
         return (
             <SpinnerLoading></SpinnerLoading>
@@ -303,9 +352,10 @@ export const BookReservations = () => {
 
                     </div>
                 </div>
-                <div className="col-6">
-                    
-                </div>
+                {userData && <div className="col-4 offset-2">
+                    <UserCard userDeatils={userData}></UserCard>
+                </div>}
+
             </div>
 
             {method()}
