@@ -38,8 +38,9 @@ export const BookReservations = () => {
             })
             setCheckoutBooks(c)
         } else {
-
+            setCheckoutBooks([])
         }
+        console.log(checkoutBooks)
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
         setCheckedSelectAll(false)
@@ -52,6 +53,7 @@ export const BookReservations = () => {
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
         }
+        console.log(checkoutBooks)
 
     }
     function changeFlag() {
@@ -72,58 +74,70 @@ export const BookReservations = () => {
             if (totalAmountOfBooks > 0) {
 
                 return (<>
-                    <div className='mt-3'>
-                        <h5>Number of reservations: ({totalAmountOfBooks})</h5>
-                    </div>
-                    {
-                        warnBooks &&
-                        <div className='alert alert-danger' role='alert'>
-                            Select at least one book
-                        </div>
-
-                    }
-                    {
-                        success &&
-                        <div className='alert alert-success' role='alert'>
-                            Success
-                        </div>
-                    }
-                    <div className="p-2 m-1 align-self-center">
-                        <div className="form-check checkbox-xl">
-                            select all
-                            <input
-                                checked={checkedSelectAll} className="form-check-input" type="checkbox" id="selectAll" onChange={(e) => handleSelectAll(e.target.checked)} />
-                        </div>
-                    </div>
-                    <div className="d-flex">
-                        <div className="p-2">
-                            <button className='btn btn-success'
-                                onClick={() => checkoutAll(checkoutBooks)}
-                            >
-                                Checkout book(s)
-                            </button>
-
-                        </div>
-                    </div>
                     {books.map(book => (
                         <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
-            else {
-                return (<div className="m-5">
-                    {
-                        success &&
-                        <div className='alert alert-success' role='alert'>
-                            Success
-                        </div>
-                    }
-                    <h3>
-                        No reservations found are linked with this email.
-                    </h3>
+            
+        }
 
-                </div>)
-            }
+    }
+    function method2() {
+
+        if (totalAmountOfBooks > 0) {
+
+            return (<>
+                <div className='mt-3'>
+                    <h5>Number of reservations: ({totalAmountOfBooks})</h5>
+                </div>
+                {
+                    warnBooks &&
+                    <div className='alert alert-danger' role='alert'>
+                        Select at least one book
+                    </div>
+
+                }
+                {
+                    success &&
+                    <div className='alert alert-success' role='alert'>
+                        Success
+                    </div>
+                }
+                <div className="p-2 m-1 align-self-center">
+                    <div className="form-check checkbox-xl">
+                        select all
+                        <input
+                            checked={checkedSelectAll} className="form-check-input" type="checkbox" id="selectAll" onChange={(e) => handleSelectAll(e.target.checked)} />
+                    </div>
+                </div>
+                <div className="d-flex">
+                    <div className="p-2">
+                        <button className='btn btn-success'
+                            onClick={() => checkoutAll(checkoutBooks)}
+                        >
+                            Checkout book(s)
+                        </button>
+
+                    </div>
+                </div>
+               
+            </>)
+        }
+        else if(totalAmountOfBooks==0) {
+            return (<div className="m-5">
+                {
+                    success &&
+                    <div className='alert alert-success' role='alert'>
+                        Success
+                    </div>
+                }
+                <h3>
+                    No reservations found are linked with this email.
+                </h3>
+
+            </div>)
+
         }
 
     }
@@ -204,6 +218,7 @@ export const BookReservations = () => {
             }
             setFlag(!flag);
             setSuccess(true)
+            setWarnBooks(false)
         }
         setIsLoading(false)
     }
@@ -261,7 +276,7 @@ export const BookReservations = () => {
             }
             setFlag(!flag);
             setSuccess(true)
-
+            setWarnBooks(false)
         }
         setIsLoading(false)
     }
@@ -290,13 +305,12 @@ export const BookReservations = () => {
                     const loadedBook: UserCardModel = {
                         userEmail: responseData.userEmail,
                         checkedoutBooks: responseData.checkedoutBooks,
-                        historyCount: responseData.reservedBooks,
-                        reservedBooks: responseData.historyCount
+                        historyCount: responseData.historyCount,
+                        reservedBooks: responseData.reservedBooks
                     }
 
 
                     setUserData(loadedBook);
-                    console.log(loadedBook);
 
                 }
                 setIsLoading(false);
@@ -351,6 +365,7 @@ export const BookReservations = () => {
                         </button>
 
                     </div>
+                    {method2()}
                 </div>
                 {userData && <div className="col-4 offset-2">
                     <UserCard userDeatils={userData}></UserCard>

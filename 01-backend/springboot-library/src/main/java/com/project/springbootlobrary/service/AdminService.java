@@ -157,7 +157,5 @@ public class AdminService {
                 .checkedoutBooks(countCheckoutsByUserEmail)
                 .historyCount(countHistoryByUserEmail)
                 .build();
-
-
     }
 }

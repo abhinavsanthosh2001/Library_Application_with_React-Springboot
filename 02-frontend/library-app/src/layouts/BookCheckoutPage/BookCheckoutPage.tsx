@@ -35,6 +35,7 @@ const BookCheckoutPage = () => {
     const [reserveCount, setReserveCount] = useState(0)
 
     useEffect(() => {
+        window.scroll(0,0)
         const fetchUserReviewBook = async () => {
             if (authState && authState.isAuthenticated) {
                 setIsloadingUserReview(true);
