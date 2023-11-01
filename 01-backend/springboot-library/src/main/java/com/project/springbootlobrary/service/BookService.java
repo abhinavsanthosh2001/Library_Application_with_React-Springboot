@@ -79,7 +79,7 @@ public class BookService {
 
                 long difference_In_Time =time.convert(returnDate.getTime()-todayDate.getTime(),
                         TimeUnit.MILLISECONDS);
-                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time,checkout.get().getRenewCount()<renewLimit));
+                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time,checkout.get().getRenewCount()<renewLimit&&(int)difference_In_Time>=0));
             }
         }
         return shelfCurrentLoansResponses;
@@ -122,6 +122,8 @@ public class BookService {
             validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
             validateCheckout.setRenewCount(validateCheckout.getRenewCount()+1);
             checkoutRepo.save(validateCheckout);
+        }else{
+            throw new Exception("Cannot renew once return date is exceeded.");
         }
 
     }

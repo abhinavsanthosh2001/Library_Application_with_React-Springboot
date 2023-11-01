@@ -1,6 +1,5 @@
 package com.project.springbootlobrary.controller;
 
-import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import com.project.springbootlobrary.service.BookService;

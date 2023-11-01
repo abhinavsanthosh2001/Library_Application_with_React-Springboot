@@ -4,6 +4,23 @@ export const LoansModal: React.FC<{
     setSuccess: any, shelfCurrentLoan: ShelfCurrentLoans, mobile: boolean, returnBook: any,
     renewLoan: any
 }> = (props) => {
+    function checks() {
+        if (props.shelfCurrentLoan.daysLeft < 0) {
+            return (<p className="text-danger">Book is over Due. Kindly return the book</p>)
+        }
+        else if (props.shelfCurrentLoan.renewAllowed) { 
+            return (
+            <p>Are you sure to renew the book ?</p>
+            ) 
+        }
+        else {
+            return (
+                <>
+                    <p className='text-danger'>Renew Limit Exceeded.</p><p>Kindly return the book before the due date</p>
+                </>)
+        }
+
+    }
     return (
         <div className='modal fade' id={props.mobile ? `mobilemodal${props.shelfCurrentLoan.book.id}` :
             `modal${props.shelfCurrentLoan.book.id}`} data-bs-backdrop='static' data-bs-keyboard='false'
@@ -45,7 +62,7 @@ export const LoansModal: React.FC<{
                                         }
                                         {props.shelfCurrentLoan.daysLeft < 0 &&
                                             <p className='text-danger'>
-                                                Past due by {props.shelfCurrentLoan.daysLeft} days.
+                                                Past due by {props.shelfCurrentLoan.daysLeft*-1} days.
                                             </p>
                                         }
                                     </div>
@@ -54,12 +71,7 @@ export const LoansModal: React.FC<{
 
                                 <div className='list-group mt-3'>
 
-                                {props.shelfCurrentLoan.renewAllowed ?
-                                <p>Are you sure to renew the book ?</p>:
-                                <>
-                                <p className='text-danger'>Renew Limit Exceeded.</p><p>Kindly return the book before the due date</p>
-                                 </>
-                                }
+                                    {checks()}
 
                                 </div>
                             </div>
@@ -67,9 +79,9 @@ export const LoansModal: React.FC<{
                     </div>
                     <div className='modal-footer'>
                         {props.shelfCurrentLoan.renewAllowed &&
-                        <button onClick={()=>props.renewLoan(props.shelfCurrentLoan.book.id)} type='button' className='btn btn-primary' data-bs-dismiss='modal'>
-                            Renew
-                        </button>}
+                            <button onClick={() => props.renewLoan(props.shelfCurrentLoan.book.id)} type='button' className='btn btn-primary' data-bs-dismiss='modal'>
+                                Renew
+                            </button>}
                         <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>
                             Close
                         </button>
