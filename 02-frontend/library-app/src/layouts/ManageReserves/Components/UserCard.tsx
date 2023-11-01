@@ -1,6 +1,4 @@
 import React from 'react'
-import UserCardModel from '../../../models/UserCardModel'
-
 export const UserCard: React.FC<{ userDeatils: any }> = (props) => {
     return (
         <div className="card text-black  mb-3" style={{backgroundColor:"lightblue"}}>

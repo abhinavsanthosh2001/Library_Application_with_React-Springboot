@@ -8,23 +8,17 @@ import UserCardModel from "../../../models/UserCardModel";
 import { numbers } from "@material/tooltip";
 
 
-export const BookReservations = () => {
+export const BookReservations: React.FC<{numberOfCheckedBook: number, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
-    const [search, setSearch] = useState("");
-    const [flag, setFlag] = useState(false);
     const [initialRender, setInitialRender] = useState(true)
-    const [warn, setWarn] = useState(false)
     const [checkoutBooks, setCheckoutBooks] = useState<number[]>([])
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
-    const [userData, setUserData] = useState<UserCardModel>()
-    const [userFlag, setUserFlag] = useState(false)
-    const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
     const [totalCount,setTotalCount] = useState(0)
   
     
@@ -42,10 +36,10 @@ export const BookReservations = () => {
                 c.push(book.bookId!)
             })
             setCheckoutBooks(c)
-            setTotalCount(numberOfCheckedBook+c.length)
+            setTotalCount(props.numberOfCheckedBook+c.length)
         } else {
             setCheckoutBooks([])
-            setTotalCount(numberOfCheckedBook)
+            setTotalCount(props.numberOfCheckedBook)
         }
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
@@ -55,20 +49,17 @@ export const BookReservations = () => {
             let c = checkoutBooks
             c.push(book.bookId!)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
+            setTotalCount(checkoutBooks.length + props.numberOfCheckedBook)
         } else {
             let c = checkoutBooks
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
+            setTotalCount(checkoutBooks.length + props.numberOfCheckedBook)
             
         }
 
     }
-    function changeFlag() {
-        setFlag(!flag);
-        setUserFlag(!userFlag)
-    }
+
 
     function method() {
         if (totalAmountOfBooks == -1) {
@@ -84,11 +75,11 @@ export const BookReservations = () => {
 
                 return (<>
                     {books.map(book => (
-                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
+                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={props.numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
-            
+
         }
 
     }
@@ -137,10 +128,10 @@ export const BookReservations = () => {
 
                     </div>
                 </div>
-               
+
             </>)
         }
-        else if(totalAmountOfBooks==0) {
+        else if (totalAmountOfBooks == 0) {
             return (<div className="m-5">
                 {
                     success &&
@@ -162,10 +153,10 @@ export const BookReservations = () => {
             setInitialRender(false)
         }
         else {
-            if (search != "") {
+            if (props.search != "") {
                 const fetchBooks = async () => {
                     setIsLoading(true)
-                    const url: string = `http://localhost:8080/api/admin/secure/getReserves?userEmail=${search}`;
+                    const url: string = `http://localhost:8080/api/admin/secure/getReserves?userEmail=${props.search}`;
 
                     if (authState && authState?.isAuthenticated) {
 
@@ -195,24 +186,34 @@ export const BookReservations = () => {
                                 reservationDate: responseData[key].reservationDate
                             })
                         }
+                        if (loadedBooks.length > 0) {
+                            props.setDisplayCard(true)
+                        }else{
+                            props.setDisplayCard(false)
+
+                        }
                         setBooks(loadedBooks);
 
+
                     }
+
                     setIsLoading(false);
-                    setWarn(false)
+                    props.setWarn(false)
                 };
+
                 fetchBooks().catch((error: any) => {
                     setIsLoading(false);
                     sethttpError(error.message);
                 })
             }
             else {
-                setWarn(true)
+                props.setWarn(true)
                 setTotalAmountOfBooks(-1)
             }
         }
 
-    }, [flag]);
+
+    }, [props.flag]);
 
     async function checkout(bookId: number) {
 
@@ -220,7 +221,7 @@ export const BookReservations = () => {
         setIsLoading(true)
         setSuccess(false)
         if (authState && authState?.isAuthenticated) {
-            const url = `http://localhost:8080/api/admin/secure/checkout?userEmail=${search}&bookId=${bookId}`
+            const url = `http://localhost:8080/api/admin/secure/checkout?userEmail=${props.search}&bookId=${bookId}`
             const options = {
                 method: "PUT",
                 headers: {
@@ -234,10 +235,10 @@ export const BookReservations = () => {
             if (!postMessage.ok) {
                 throw new Error("Something went wrong");
             }
-            setFlag(!flag);
+            props.setFlag(!props.flag);
             setSuccess(true)
             setWarnBooks(false)
-            setUserFlag(!userFlag)
+            props.setUserFlag(!props.userFlag)
             
             
         }
@@ -254,7 +255,7 @@ export const BookReservations = () => {
         else {
             setWarnBooks(false)
             if (authState && authState?.isAuthenticated) {
-                const url = `http://localhost:8080/api/admin/secure/checkout/bulk?userEmail=${search}`
+                const url = `http://localhost:8080/api/admin/secure/checkout/bulk?userEmail=${props.search}`
                 const options = {
                     method: "PUT",
                     headers: {
@@ -270,8 +271,8 @@ export const BookReservations = () => {
                     throw new Error("Something went wrong");
                 }
                 setSuccess(true)
-                setUserFlag(!userFlag)
-                setFlag(!flag);
+                props.setFlag(!props.flag);
+                props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
             }
 
@@ -284,7 +285,7 @@ export const BookReservations = () => {
         setSuccess(false)
 
         if (authState && authState?.isAuthenticated) {
-            const url = `http://localhost:8080/api/admin/secure/deleteReserve?userEmail=${search}&bookId=${bookId}`
+            const url = `http://localhost:8080/api/admin/secure/deleteReserve?userEmail=${props.search}&bookId=${bookId}`
             const options = {
                 method: "DELETE",
                 headers: {
@@ -298,55 +299,13 @@ export const BookReservations = () => {
             if (!postMessage.ok) {
                 throw new Error("Something went wrong");
             }
-            setFlag(!flag);
+            props.setFlag(!props.flag);
             setSuccess(true)
-            setUserFlag(!userFlag)
+            props.setUserFlag(!props.userFlag)
             setWarnBooks(false)
         }
         setIsLoading(false)
     }
-
-    useEffect(() => {
-
-        if (search != "") {
-            const fetchBooks = async () => {
-                setIsLoading(true)
-                const url: string = `http://localhost:8080/api/admin/secure/getUserData?userEmail=${search}`;
-
-                if (authState && authState?.isAuthenticated) {
-
-                    const options = {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                            'Content-Type': 'application/json'
-                        }
-                    };
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error("Something went wrong");
-                    }
-                    const responseData = await response.json();
-                    const loadedBook: UserCardModel = {
-                        userEmail: responseData.userEmail,
-                        checkedoutBooks: responseData.checkedoutBooks,
-                        historyCount: responseData.historyCount,
-                        reservedBooks: responseData.reservedBooks
-                    }
-                    setNumberOfCheckedBook(responseData.checkedoutBooks)
-                    setUserData(loadedBook);
-
-                }
-                setIsLoading(false);
-                setWarn(false)
-            };
-            fetchBooks().catch((error: any) => {
-                setIsLoading(false);
-                sethttpError(error.message);
-            })
-        }
-
-    }, [userFlag]);
 
     if (isLoading) {
         return (
@@ -366,41 +325,11 @@ export const BookReservations = () => {
     return (
         <>
             <div className='row mt-5'>
-                {
-                    warn &&
-                    <div className='alert alert-danger' role='alert'>
-                        All fields must be filled out
-                    </div>
-
-                }
                 <div className='col-6'>
-
-                    <div className='d-flex'>
-
-                        <input className='form-control me-2' type='search'
-
-                            placeholder='Search' aria-labelledby='Search'
-                            required onChange={e => setSearch(e.target.value)}
-                            value={search}
-                        />
-                        <button className='btn btn-outline-success'
-                            onClick={() => changeFlag()}>
-                            Search
-                        </button>
-
-                    </div>
                     {method2()}
                 </div>
-                {userData && <div className="col-4 offset-2">
-                    <UserCard userDeatils={userData}></UserCard>
-                </div>}
-
             </div>
-
             {method()}
-
-
-
         </>
     )
 }
