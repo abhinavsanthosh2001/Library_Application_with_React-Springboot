@@ -5,7 +5,6 @@ import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 import { UserCard } from "./UserCard";
 import UserCardModel from "../../../models/UserCardModel";
-import { numbers } from "@material/tooltip";
 
 
 export const BookReservations = () => {
@@ -24,10 +23,6 @@ export const BookReservations = () => {
     const [success, setSuccess] = useState(false)
     const [userData, setUserData] = useState<UserCardModel>()
     const [userFlag, setUserFlag] = useState(false)
-    const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
-    const [totalCount,setTotalCount] = useState(0)
-  
-    
 
 
     function handleCheck(bookId: number) {
@@ -42,28 +37,21 @@ export const BookReservations = () => {
                 c.push(book.bookId!)
             })
             setCheckoutBooks(c)
-            setTotalCount(numberOfCheckedBook+c.length)
         } else {
             setCheckoutBooks([])
         }
         console.log(checkoutBooks)
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
-
         setCheckedSelectAll(false)
         if (checked) {
             let c = checkoutBooks
             c.push(book.bookId!)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
-            console.log("total ",totalCount)
         } else {
             let c = checkoutBooks
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
-            console.log("total ",totalCount)
-            
         }
         console.log(checkoutBooks)
 
@@ -87,7 +75,7 @@ export const BookReservations = () => {
 
                 return (<>
                     {books.map(book => (
-                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
+                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
@@ -125,18 +113,11 @@ export const BookReservations = () => {
                 </div>
                 <div className="d-flex">
                     <div className="p-2">
-                      {totalCount <=5 ?   
-                      <button  className='btn btn-success'
+                        <button className='btn btn-success'
                             onClick={() => checkoutAll(checkoutBooks)}
                         >
                             Checkout book(s)
-                        </button>:
-                        <button  className='btn btn-success'
-                            onClick={() => checkoutAll(checkoutBooks) } disabled
-                        >
-                            Checkout book(s)
                         </button>
-                        }
 
                     </div>
                 </div>
@@ -218,8 +199,6 @@ export const BookReservations = () => {
     }, [flag]);
 
     async function checkout(bookId: number) {
-
-        
         setIsLoading(true)
         setSuccess(false)
         if (authState && authState?.isAuthenticated) {
@@ -240,15 +219,11 @@ export const BookReservations = () => {
             setFlag(!flag);
             setSuccess(true)
             setWarnBooks(false)
-            setUserFlag(!userFlag)
-            
-            
         }
         setIsLoading(false)
     }
 
     async function checkoutAll(bookIds: number[]) {
-        
         setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
@@ -273,7 +248,6 @@ export const BookReservations = () => {
                     throw new Error("Something went wrong");
                 }
                 setSuccess(true)
-                setUserFlag(!userFlag)
                 setFlag(!flag);
             }
 
@@ -302,7 +276,6 @@ export const BookReservations = () => {
             }
             setFlag(!flag);
             setSuccess(true)
-            setUserFlag(!userFlag)
             setWarnBooks(false)
         }
         setIsLoading(false)
@@ -335,7 +308,8 @@ export const BookReservations = () => {
                         historyCount: responseData.historyCount,
                         reservedBooks: responseData.reservedBooks
                     }
-                    setNumberOfCheckedBook(responseData.checkedoutBooks)
+
+
                     setUserData(loadedBook);
 
                 }
