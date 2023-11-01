@@ -2,7 +2,7 @@ import { useState } from "react";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 
 
-export const BookReservation: React.FC<{handleCheck: any, addBookToCheckout: any, book: CheckoutResponse, checkout: any, deleteReserve: any }> = (props) => {
+export const BookReservation: React.FC<{handleCheck: any, addBookToCheckout: any, book: CheckoutResponse, checkout: any, deleteReserve: any, numberOfCheckedBooks :any }> = (props) => {
     const [checked, setChecked] = useState(false)
 
     return (
@@ -52,7 +52,7 @@ export const BookReservation: React.FC<{handleCheck: any, addBookToCheckout: any
                             <button className="btn btn-danger" type="button" onClick={() => props.deleteReserve(props.book.bookId)}>Delete Reserve</button>
 
 
-                            <button className="btn btn-primary" type="button" onClick={() => props.checkout(props.book.bookId)}>Checkout</button>
+                            {props.numberOfCheckedBooks<=4 ? <button className="btn btn-primary" type="button" onClick={() => props.checkout(props.book.bookId)}>Checkout</button>:<button className="btn btn-primary" type="button" onClick={() => props.checkout(props.book.bookId)} disabled>Checkout</button>}
 
 
                         </div>
