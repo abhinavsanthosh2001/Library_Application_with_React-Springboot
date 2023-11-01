@@ -35,4 +35,7 @@ public class Checkout {
     @Column(name = "book_id")
     Long bookId;
 
+    @Column(name = "renew_count")
+    int renewCount;
+
 }

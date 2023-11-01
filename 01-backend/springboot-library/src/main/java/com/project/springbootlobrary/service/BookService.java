@@ -50,6 +50,7 @@ public class BookService {
     @Autowired
     ReserveBookRepo reserveBookRepo;
 
+    final int renewLimit = 1;
 
 
     public Boolean checkedOutByUser(Long bookId, String userEmail){
@@ -78,7 +79,7 @@ public class BookService {
 
                 long difference_In_Time =time.convert(returnDate.getTime()-todayDate.getTime(),
                         TimeUnit.MILLISECONDS);
-                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time));
+                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time,checkout.get().getRenewCount()<renewLimit));
             }
         }
         return shelfCurrentLoansResponses;
@@ -106,17 +107,20 @@ public class BookService {
 
     }
 
-    public void renewBook(String userEmail, Long bookId) throws ParseException {
+    public void renewBook(String userEmail, Long bookId) throws Exception {
         Checkout validateCheckout = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
         if (validateCheckout==null){
-
+            throw new Exception("Checkout Details not found");
+        }
+        if(validateCheckout.getRenewCount()>=renewLimit){
+            throw new Exception("Renew Limit Exceeded");
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        assert validateCheckout != null;
         Date returnDate = sdf.parse(validateCheckout.getReturnDate());
         Date todayDate = sdf.parse(LocalDate.now().toString());
         if(returnDate.compareTo(todayDate)>0 || returnDate.compareTo(todayDate)==0){
             validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
+            validateCheckout.setRenewCount(validateCheckout.getRenewCount()+1);
             checkoutRepo.save(validateCheckout);
         }
 
