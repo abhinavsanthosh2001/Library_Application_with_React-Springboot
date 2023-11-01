@@ -19,6 +19,8 @@ export const ManageReserves = () => {
   const [userData, setUserData] = useState<UserCardModel>()
   const [httpError, sethttpError] = useState(null);
   const [displayCard, setDisplayCard] = useState(false)
+  const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
+
 
 
 
@@ -49,8 +51,7 @@ export const ManageReserves = () => {
             historyCount: responseData.historyCount,
             reservedBooks: responseData.reservedBooks
           }
-
-
+          setNumberOfCheckedBook(responseData.checkedoutBooks)
           setUserData(loadedBook);
 
         }
@@ -156,7 +157,7 @@ export const ManageReserves = () => {
           </div>
 
           <div className='tab-pane fade show active' id='nav-quantity' role='tabpanel' aria-labelledby='nav-quantity-tab'>
-            {checkout && <BookReservations setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
+            {checkout && <BookReservations numberOfCheckedBook={numberOfCheckedBook} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
 
           </div>
         </div>

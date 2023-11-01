@@ -8,7 +8,7 @@ import UserCardModel from "../../../models/UserCardModel";
 import { numbers } from "@material/tooltip";
 
 
-export const BookReservations: React.FC<{ setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
+export const BookReservations: React.FC<{numberOfCheckedBook: number, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -19,9 +19,6 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
-    const [userData, setUserData] = useState<UserCardModel>()
-    const [userFlag, setUserFlag] = useState(false)
-    const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
     const [totalCount,setTotalCount] = useState(0)
   
     
@@ -39,10 +36,10 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
                 c.push(book.bookId!)
             })
             setCheckoutBooks(c)
-            setTotalCount(numberOfCheckedBook+c.length)
+            setTotalCount(props.numberOfCheckedBook+c.length)
         } else {
             setCheckoutBooks([])
-            setTotalCount(numberOfCheckedBook)
+            setTotalCount(props.numberOfCheckedBook)
         }
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
@@ -52,12 +49,12 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
             let c = checkoutBooks
             c.push(book.bookId!)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
+            setTotalCount(checkoutBooks.length + props.numberOfCheckedBook)
         } else {
             let c = checkoutBooks
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
-            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
+            setTotalCount(checkoutBooks.length + props.numberOfCheckedBook)
             
         }
 
@@ -78,7 +75,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
 
                 return (<>
                     {books.map(book => (
-                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
+                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={props.numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
@@ -241,7 +238,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
             props.setFlag(!props.flag);
             setSuccess(true)
             setWarnBooks(false)
-            setUserFlag(!userFlag)
+            props.setUserFlag(!props.userFlag)
             
             
         }
@@ -275,7 +272,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
                 }
                 setSuccess(true)
                 props.setFlag(!props.flag);
-                setUserFlag(!userFlag)
+                props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
             }
 
@@ -304,7 +301,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
             }
             props.setFlag(!props.flag);
             setSuccess(true)
-            setUserFlag(!userFlag)
+            props.setUserFlag(!props.userFlag)
             setWarnBooks(false)
         }
         setIsLoading(false)
