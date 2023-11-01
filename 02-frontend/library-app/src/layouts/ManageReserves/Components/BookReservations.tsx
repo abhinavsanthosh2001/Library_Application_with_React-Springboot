@@ -56,16 +56,13 @@ export const BookReservations = () => {
             c.push(book.bookId!)
             setCheckoutBooks(c)
             setTotalCount(checkoutBooks.length + numberOfCheckedBook)
-            console.log("total ",totalCount)
         } else {
             let c = checkoutBooks
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
             setTotalCount(checkoutBooks.length + numberOfCheckedBook)
-            console.log("total ",totalCount)
             
         }
-        console.log(checkoutBooks)
 
     }
     function changeFlag() {
