@@ -5,6 +5,7 @@ import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 import { UserCard } from "./UserCard";
 import UserCardModel from "../../../models/UserCardModel";
+import { numbers } from "@material/tooltip";
 
 
 export const BookReservations: React.FC<{ setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
@@ -18,6 +19,12 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [userData, setUserData] = useState<UserCardModel>()
+    const [userFlag, setUserFlag] = useState(false)
+    const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
+    const [totalCount,setTotalCount] = useState(0)
+  
+    
 
 
     function handleCheck(bookId: number) {
@@ -32,23 +39,27 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
                 c.push(book.bookId!)
             })
             setCheckoutBooks(c)
+            setTotalCount(numberOfCheckedBook+c.length)
         } else {
             setCheckoutBooks([])
+            setTotalCount(numberOfCheckedBook)
         }
-        console.log(checkoutBooks)
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
+
         setCheckedSelectAll(false)
         if (checked) {
             let c = checkoutBooks
             c.push(book.bookId!)
             setCheckoutBooks(c)
+            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
         } else {
             let c = checkoutBooks
             c.splice(c.indexOf(book.bookId!), 1)
             setCheckoutBooks(c)
+            setTotalCount(checkoutBooks.length + numberOfCheckedBook)
+            
         }
-        console.log(checkoutBooks)
 
     }
 
@@ -67,7 +78,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
 
                 return (<>
                     {books.map(book => (
-                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} checkout={checkout} deleteReserve={deleteReserve} />
+                        <BookReservation handleCheck={handleCheck} addBookToCheckout={addBookToCheckout} book={book} key={book.bookId} numberOfCheckedBooks={numberOfCheckedBook} checkout={checkout} deleteReserve={deleteReserve} />
                     ))}
                 </>)
             }
@@ -105,11 +116,18 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
                 </div>
                 <div className="d-flex">
                     <div className="p-2">
-                        <button className='btn btn-success'
+                      {totalCount <=5 ?   
+                      <button  className='btn btn-success'
                             onClick={() => checkoutAll(checkoutBooks)}
                         >
                             Checkout book(s)
+                        </button>:
+                        <button  className='btn btn-success'
+                            onClick={() => checkoutAll(checkoutBooks) } disabled
+                        >
+                            Checkout book(s)
                         </button>
+                        }
 
                     </div>
                 </div>
@@ -201,6 +219,8 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
     }, [props.flag]);
 
     async function checkout(bookId: number) {
+
+        
         setIsLoading(true)
         setSuccess(false)
         if (authState && authState?.isAuthenticated) {
@@ -221,11 +241,15 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
             props.setFlag(!props.flag);
             setSuccess(true)
             setWarnBooks(false)
+            setUserFlag(!userFlag)
+            
+            
         }
         setIsLoading(false)
     }
 
     async function checkoutAll(bookIds: number[]) {
+        
         setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
@@ -251,6 +275,8 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
                 }
                 setSuccess(true)
                 props.setFlag(!props.flag);
+                setUserFlag(!userFlag)
+                setCheckoutBooks([])
             }
 
         }
@@ -278,6 +304,7 @@ export const BookReservations: React.FC<{ setDisplayCard: any, search: string, s
             }
             props.setFlag(!props.flag);
             setSuccess(true)
+            setUserFlag(!userFlag)
             setWarnBooks(false)
         }
         setIsLoading(false)
