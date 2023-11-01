@@ -45,8 +45,8 @@ export const BookReservations = () => {
             setTotalCount(numberOfCheckedBook+c.length)
         } else {
             setCheckoutBooks([])
+            setTotalCount(numberOfCheckedBook)
         }
-        console.log(checkoutBooks)
     }
     function addBookToCheckout(book: CheckoutResponse, checked: boolean) {
 
@@ -275,6 +275,7 @@ export const BookReservations = () => {
                 setSuccess(true)
                 setUserFlag(!userFlag)
                 setFlag(!flag);
+                setCheckoutBooks([])
             }
 
         }
