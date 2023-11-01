@@ -4,6 +4,7 @@ package com.project.springbootlobrary.controller;
 import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.requestModels.AddBookRequest;
 import com.project.springbootlobrary.responseModels.CheckoutResponse;
+import com.project.springbootlobrary.responseModels.ReserveResponse;
 import com.project.springbootlobrary.responseModels.UserCard;
 import com.project.springbootlobrary.service.AdminService;
 import com.project.springbootlobrary.service.BookService;
@@ -78,13 +79,25 @@ public class AdminController {
     }
 
     @GetMapping("/secure/getReserves")
-    public List<CheckoutResponse> getReservedBooks(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
+    public List<ReserveResponse> getReservedBooks(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
         String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
         if(admin == null || !admin.equals("admin")){
             throw new Exception("Administration page only.");
 
         }
         return adminService.getReservesByEmail(userEmail);
+    }
+
+
+    @GetMapping("/secure/getCheckouts")
+    public List<CheckoutResponse> getCheckedBooks(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
+        String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
+        if(admin == null || !admin.equals("admin")){
+            throw new Exception("Administration page only.");
+
+        }
+
+        return adminService.getCheckoutsByEmail(userEmail);
     }
     @GetMapping("/secure/getUserData")
     public UserCard getUserData(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
