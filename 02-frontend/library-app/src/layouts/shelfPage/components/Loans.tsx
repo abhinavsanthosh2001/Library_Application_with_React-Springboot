@@ -13,9 +13,9 @@ export const Loans = () => {
     const [shelfCurrentLoans, setShelfCurrentLoans] = useState<ShelfCurrentLoans[]>([]);
     const [isLoadingLoans, setIsLoadingLoans] = useState(true);
     const [checkout,setCheckout] =useState(false)
+    const [success, setSuccess] = useState(false)
 
     async function returnBook(bookId: number) {
-        console.log("comming ..")
         const url = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'PUT',
@@ -32,6 +32,7 @@ export const Loans = () => {
         
     }
     async function renew(bookId: number) {
+        setSuccess(false)
         const url = `http://localhost:8080/api/books/secure/renew/loan/?bookId=${bookId}`;
                 const requestOptions = {
                     method: 'PUT',
@@ -44,8 +45,8 @@ export const Loans = () => {
                 if (!response.ok) {
                     throw new Error("Something Went Wrong!!")
                 }
+                setSuccess(true)
                 setCheckout(!checkout)
-        
     }
 
     useEffect(() => {
@@ -96,7 +97,12 @@ export const Loans = () => {
             <div className='d-none d-lg-block mt-2'>
                 {shelfCurrentLoans.length > 0 ? 
                 <>
-                    <h5>Current Loans: </h5>
+                    <h5>CheckedOut Books: </h5>
+                    {success &&
+                    <div className="alert alert-success" role="alert">
+                    Book Renewed Successfully! Enjoy Reading.
+                  </div>
+                    }
 
                     {shelfCurrentLoans.map(shelfCurrentLoan => (
                         <div key={shelfCurrentLoan.book.id}>
@@ -112,7 +118,7 @@ export const Loans = () => {
                                 <div className='card col-3 col-md-3 container d-flex'>
                                     <div className='card-body'>
                                         <div className='mt-3'>
-                                            <h4>Loan Options</h4>
+                                            <h4>Details</h4>
                                             {shelfCurrentLoan.daysLeft > 0 && 
                                                 <p className='text-secondary'>
                                                     Due in {shelfCurrentLoan.daysLeft} days.
@@ -132,7 +138,7 @@ export const Loans = () => {
                                                 <button className='list-group-item list-group-item-action' 
                                                     aria-current='true' data-bs-toggle='modal' 
                                                     data-bs-target={`#modal${shelfCurrentLoan.book.id}`}>
-                                                        Manage Loan
+                                                        Renew Book
                                                 </button>
                                                 <Link to={'search'} className='list-group-item list-group-item-action'>
                                                     Search more books?
@@ -150,7 +156,7 @@ export const Loans = () => {
                                 </div>
                             </div>
                             <hr/>
-                            <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={false} returnBook={returnBook} 
+                            <LoansModal setSuccess={setSuccess} shelfCurrentLoan={shelfCurrentLoan} mobile={false} returnBook={returnBook} 
                                 renewLoan={renew}/>
                         </div>
                     ))}
@@ -223,7 +229,7 @@ export const Loans = () => {
                                 </div>
                             
                             <hr/>
-                            <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} returnBook={returnBook} 
+                            <LoansModal setSuccess={setSuccess} shelfCurrentLoan={shelfCurrentLoan} mobile={true} returnBook={returnBook} 
                                 renewLoan={renew}/>
                         </div>
                     ))}

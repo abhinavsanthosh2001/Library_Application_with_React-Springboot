@@ -14,5 +14,6 @@ import lombok.experimental.FieldDefaults;
 public class ShelfCurrentLoansResponse {
     Book book;
     int daysLeft;
+    boolean renewAllowed;
 
 }
