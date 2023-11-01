@@ -22,17 +22,14 @@ export const Navbar = () => {
             <li className="nav-item">
               <NavLink className="nav-link" to={"/home"}>Home</NavLink>
             </li>
-            {authState.isAuthenticated && authState.accessToken?.claims.userType !== "admin" && <li className="nav-item">
+            <li className="nav-item">
               <NavLink className="nav-link" to={"/search"}>Search</NavLink>
-            </li>}
-            {authState.isAuthenticated && authState.accessToken?.claims.userType !== "admin" && <li className="nav-item">
+            </li>
+            {authState.isAuthenticated && <li className="nav-item">
               <NavLink className="nav-link" to={"/shelf"}>Shelf</NavLink>
             </li>}
             {authState.accessToken?.claims.userType === "admin" && <li className="nav-item">
-              <NavLink className="nav-link" to={"/admin/ml"}>Manage Books</NavLink>
-            </li>}
-            {authState.accessToken?.claims.userType === "admin" && <li className="nav-item">
-              <NavLink className="nav-link" to={"/admin/mrl"}>Issue/Return Books</NavLink>
+              <NavLink className="nav-link" to={"/admin/ml"}>Admin</NavLink>
             </li>}
            
 
