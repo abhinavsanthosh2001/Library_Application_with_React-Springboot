@@ -51,7 +51,18 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any,
 
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Book</button>
                             <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
-                            <ToastContainer/>
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={2001}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme="light"
+                            />
                         </div>
                     </div>
 
@@ -98,7 +109,18 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any,
                         <div className="d-grid mt-2">
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Boook</button>
                             <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
-                            <ToastContainer/>
+                            <ToastContainer
+position="top-right"
+autoClose={2001}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+/>
                         </div>
                     </div>
                 </div>

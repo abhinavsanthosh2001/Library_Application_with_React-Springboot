@@ -25,7 +25,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     
     function notify1(){
         console.log("commng here too.. for toast")
-        toast('Renewed Succesfully.');
+        toast.success('Renewed Succesfully.');
 
     }
     async function returnBook(bookId: number) {
