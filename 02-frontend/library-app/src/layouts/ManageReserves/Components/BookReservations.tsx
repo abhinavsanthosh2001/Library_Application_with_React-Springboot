@@ -149,7 +149,10 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
 
     }
     useEffect(() => {
-      
+        if (initialRender) {
+            setInitialRender(false)
+        }
+        else {
             if (props.search != "") {
                 const fetchBooks = async () => {
                     setIsLoading(true)
@@ -207,7 +210,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
                 props.setWarn(true)
                 setTotalAmountOfBooks(-1)
             }
-        
+        }
 
 
     }, [props.flag]);
