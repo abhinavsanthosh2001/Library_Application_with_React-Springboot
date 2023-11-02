@@ -108,6 +108,11 @@ public class AdminController {
 
         return adminService.getCheckoutsByEmail(userEmail);
     }
+
+    @PutMapping("/secure/return")
+    public void returnBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token,@RequestParam String userEmail) throws Exception {
+        bookService.returnBook(userEmail, bookId);
+    }
     @GetMapping("/secure/getUserData")
     public UserCard getUserData(@RequestHeader(value = "Authorization") String token, @RequestParam String userEmail) throws Exception {
         String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");

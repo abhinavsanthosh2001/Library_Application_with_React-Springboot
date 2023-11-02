@@ -15,9 +15,8 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
     const [render, setRender] = useState(false)
 
     async function returnBook(bookId: number) {
-        console.log("comming here to delete..  ",props.search)
 
-        const url = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}&userEmail=${props.search}`;
+        const url = `http://localhost:8080/api/admin/secure/return/?bookId=${bookId}&userEmail=${props.search}`;
                 const requestOptions = {
                     method: 'PUT',
                     headers: {

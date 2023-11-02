@@ -21,12 +21,14 @@ public class BookController {
     BookService bookService;
 
     @PutMapping("/secure/return")
-    public void returnBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token,@RequestParam String userEmail) throws Exception {
+    public void returnBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.returnBook(userEmail, bookId);
     }
 
     @PutMapping("/secure/renew/loan")
-    public void renewBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token,@RequestParam String userEmail) throws Exception {
+    public void renewBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         bookService.renewBook(userEmail, bookId);
     }
     @GetMapping("/secure/ischeckedout/byuser")
