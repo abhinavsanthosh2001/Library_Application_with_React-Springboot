@@ -8,6 +8,7 @@ import com.project.springbootlobrary.entities.Book;
 import com.project.springbootlobrary.entities.Checkout;
 import com.project.springbootlobrary.entities.History;
 import com.project.springbootlobrary.entities.Reserve;
+import com.project.springbootlobrary.responseModels.CheckoutResponse;
 import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import lombok.AccessLevel;
@@ -207,4 +208,38 @@ public class BookService {
         return reserveBookRepo.countByUserEmail(userEmail);
 
     }
+
+    public List<CheckoutResponse> getReserves(String userEmail) {
+        List<Reserve> reserves = reserveBookRepo.findByUserEmail(userEmail);
+        List<CheckoutResponse> reservedBooks = new ArrayList<>();
+        reserves.forEach(reserve -> {
+            Optional<Book> bookOptional = bookRepo.findById(reserve.getBookId());
+            if(bookOptional.isPresent()) {
+                Book reservedBook = bookOptional.get();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date reserveDate;
+                try {
+                    reserveDate = sdf.parse(reserve.getReserveDate());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                Date collectionDate = new Date(reserveDate.getTime() + (1000 * 60 * 60 * 24) * 3);
+                LocalDate date = collectionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+                CheckoutResponse checkoutResponse = CheckoutResponse.builder()
+                        .img(reservedBook.getImg())
+                        .collectionDate(date.toString())
+                        .reservationDate(reserve.getReserveDate())
+                        .author(reservedBook.getAuthor())
+                        .bookId(reservedBook.getId())
+                        .title(reservedBook.getTitle())
+                        .build();
+                reservedBooks.add(checkoutResponse);
+            }
+
+        });
+
+        return reservedBooks;
+    }
+
 }

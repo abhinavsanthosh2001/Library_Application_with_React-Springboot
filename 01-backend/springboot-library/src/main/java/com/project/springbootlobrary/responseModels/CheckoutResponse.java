@@ -22,4 +22,6 @@ public class CheckoutResponse {
     String userEmail;
 
     String reservationDate;
+
+    String collectionDate;
 }
