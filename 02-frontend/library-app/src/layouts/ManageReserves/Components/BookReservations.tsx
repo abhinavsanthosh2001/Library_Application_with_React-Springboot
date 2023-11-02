@@ -5,7 +5,7 @@ import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
 
 
-export const BookReservations: React.FC<{initialRender:boolean, setInitialRender:any,numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
+export const BookReservations: React.FC<{ initialRender: boolean, setInitialRender: any, numberOfCheckedBook: number, checkedOut: any, newFeature: any, setNumberOfCheckedBook: any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -15,9 +15,9 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
     const [success, setSuccess] = useState(false)
-    const [totalCount,setTotalCount] = useState(0)
-  
-    
+    const [totalCount, setTotalCount] = useState(0)
+
+
 
 
     function handleCheck(bookId: number) {
@@ -32,7 +32,7 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
                 c.push(book.bookId!)
             })
             setCheckoutBooks(c)
-            setTotalCount(props.numberOfCheckedBook+c.length)
+            setTotalCount(props.numberOfCheckedBook + c.length)
         } else {
             setCheckoutBooks([])
             setTotalCount(props.numberOfCheckedBook)
@@ -54,6 +54,15 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
             
         }
 
+    }
+    function removeIfChecked(bookid: number) {        
+            let checkedBooksList = checkoutBooks
+            const index = checkedBooksList.indexOf(bookid)
+            if (index > -1) {
+                checkedBooksList.splice(index, 1)
+                setCheckoutBooks(checkedBooksList)
+                setTotalCount(checkoutBooks.length + props.numberOfCheckedBook)
+            }
     }
 
 
@@ -109,17 +118,17 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
                 </div>
                 <div className="d-flex">
                     <div className="p-2">
-                      {totalCount <=5 ?   
-                      <button  className='btn btn-success'
-                            onClick={() => checkoutAll(checkoutBooks)}
-                        >
-                            Checkout book(s)
-                        </button>:
-                        <button  className='btn btn-success'
-                            onClick={() => checkoutAll(checkoutBooks) } disabled
-                        >
-                            Checkout book(s)
-                        </button>
+                        {totalCount <= 5 ?
+                            <button className='btn btn-success'
+                                onClick={() => checkoutAll(checkoutBooks)}
+                            >
+                                Checkout book(s)
+                            </button> :
+                            <button className='btn btn-success'
+                                onClick={() => checkoutAll(checkoutBooks)} disabled
+                            >
+                                Checkout book(s)
+                            </button>
                         }
 
                     </div>
@@ -212,8 +221,6 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
     }, [props.flag,props.checkedOut,props.newFeature]);
 
     async function checkout(bookId: number) {
-
-        
         setIsLoading(true)
         setSuccess(false)
         if (authState && authState?.isAuthenticated) {
@@ -232,17 +239,16 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
+            props.setUserFlag(!props.userFlag)
             setSuccess(true)
             setWarnBooks(false)
-            props.setUserFlag(!props.userFlag)
-            
-            
+            removeIfChecked(bookId)
         }
         setIsLoading(false)
     }
 
     async function checkoutAll(bookIds: number[]) {
-        
+
         setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
@@ -296,9 +302,10 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
-            setSuccess(true)
             props.setUserFlag(!props.userFlag)
             setWarnBooks(false)
+            setSuccess(true)
+            removeIfChecked(bookId)
         }
         setIsLoading(false)
     }
@@ -310,7 +317,7 @@ export const BookReservations: React.FC<{initialRender:boolean, setInitialRender
     }
     if (httpError) {
         return (
-            <div className='contsiner m-5'>
+            <div className='container m-5'>
                 <p>{httpError}</p>
             </div>
         );

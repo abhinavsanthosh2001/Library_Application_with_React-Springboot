@@ -12,7 +12,6 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
     const [render, setRender] = useState(false)
-    const [firstRender,setFirstRender] = useState(true);
     const [isMorethanOneBook,setIsMorethanOneBook] = useState(false);
 
 
@@ -55,12 +54,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
         if (props.initialRender) {
             console.log("hi")
             props.setInitialRender(false)
-        }
-        else if(firstRender){
-            setFirstRender(false)
-        }
-            
-        
+        } 
         else{
             if (props.search != "") {
                 const fetchBooks = async () => {
