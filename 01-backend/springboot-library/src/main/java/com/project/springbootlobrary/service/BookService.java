@@ -118,6 +118,18 @@ public class BookService {
         }
     }
 
+    public void renewBookByAdmin(String userEmail, Long bookId) throws Exception {
+        Checkout validateCheckout = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assert validateCheckout != null;
+        Date returnDate = sdf.parse(validateCheckout.getReturnDate());
+        Date todayDate = sdf.parse(LocalDate.now().toString());
+        if(returnDate.compareTo(todayDate)>0 || returnDate.compareTo(todayDate)==0){
+            validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
+            checkoutRepo.save(validateCheckout);
+        }
+    }
+
 
     public Boolean isBooked(String userEmail, Long bookId) {
         Reserve byUserEmailAndBookId = reserveBookRepo.findByUserEmailAndBookId(userEmail, bookId);

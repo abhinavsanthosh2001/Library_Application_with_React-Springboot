@@ -49,6 +49,15 @@ public class AdminController {
 
         adminService.deleteBookById(bookId);
     }
+    @PutMapping("/secure/renew/loan")
+    public void renewBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token,@RequestParam String userEmail) throws Exception {
+        String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
+        if(admin == null || !admin.equals("admin")){
+            throw new Exception("Administration page only.");
+
+        }
+        adminService.renewBookByAdmin(userEmail, bookId);
+    }
     @PutMapping("/secure/changeQuantity/book")
     public void changeQuantity(@RequestHeader(value = "Authorization") String token,
                            @RequestParam Long bookId, @RequestParam boolean add) throws Exception {

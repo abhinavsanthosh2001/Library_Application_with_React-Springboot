@@ -35,7 +35,7 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
 
     async function renew(bookId: number) {
         console.log("commng here too..")
-        const url = `http://localhost:8080/api/books/secure/renew/loan/?bookId=${bookId}&userEmail=${props.search}`;
+        const url = `http://localhost:8080/api/admin/secure/renew/loan/?bookId=${bookId}&userEmail=${props.search}`;
                 const requestOptions = {
                     method: 'PUT',
                     headers: {
