@@ -14,7 +14,7 @@ public class CheckoutResponse {
     String title;
 
     String author;
-    
+
     String userEmail;
 
     String reservationDate;
@@ -22,4 +22,6 @@ public class CheckoutResponse {
     String returnDate;
 
     String img;
+
+    String collectionDate;
 }

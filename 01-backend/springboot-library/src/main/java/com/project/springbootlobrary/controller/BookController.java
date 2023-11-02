@@ -1,5 +1,6 @@
 package com.project.springbootlobrary.controller;
 
+import com.project.springbootlobrary.responseModels.CheckoutResponse;
 import com.project.springbootlobrary.responseModels.CollectionDateResponse;
 import com.project.springbootlobrary.responseModels.ShelfCurrentLoansResponse;
 import com.project.springbootlobrary.service.BookService;
@@ -77,5 +78,11 @@ public class BookController {
     public CollectionDateResponse getCollectionDate(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) throws ParseException {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.getCollectionDate(userEmail, bookId);
+    }
+    @GetMapping("secure/getReserves")
+    public List<CheckoutResponse> getReserves(@RequestHeader(value = "Authorization") String token)
+            throws ParseException {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        return bookService.getReserves(userEmail);
     }
 }

@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
-import { UserCard } from "./UserCard";
-import UserCardModel from "../../../models/UserCardModel";
-import { numbers } from "@material/tooltip";
 
 
 export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
