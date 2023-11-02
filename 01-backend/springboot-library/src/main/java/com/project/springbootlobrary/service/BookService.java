@@ -106,11 +106,8 @@ public class BookService {
 
     }
 
-    public void renewBook(String userEmail, Long bookId) throws ParseException {
+    public void renewBook(String userEmail, Long bookId) throws Exception {
         Checkout validateCheckout = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
-        if (validateCheckout==null){
-
-        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         assert validateCheckout != null;
         Date returnDate = sdf.parse(validateCheckout.getReturnDate());
@@ -119,7 +116,6 @@ public class BookService {
             validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
             checkoutRepo.save(validateCheckout);
         }
-
     }
 
 

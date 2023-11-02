@@ -30,8 +30,25 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
                     throw new Error("Something Went Wrong!!")
                 }
                 setRender(!render)
-                props.setUserFlag(!props.userFlag)
-                  
+                props.setUserFlag(!props.userFlag) 
+    }
+
+    async function renew(bookId: number) {
+        console.log("commng here too..")
+        const url = `http://localhost:8080/api/books/secure/renew/loan/?bookId=${bookId}&userEmail=${props.search}`;
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                const response = await fetch(url, requestOptions);
+                if (!response.ok) {
+                    throw new Error("Something Went Wrong!!")
+                }
+                props.setUserFlag(!props.userFlag) 
+                setRender(!render)  
     }
     useEffect(() => {
        
@@ -115,7 +132,7 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
                 </div>
 
     {books.map(book => (
-                        <CheckoutBook book={book} key={book.bookId} returnBook={returnBook} />
+                        <CheckoutBook book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
                     ))}
     </>
   )

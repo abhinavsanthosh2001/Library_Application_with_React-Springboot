@@ -27,8 +27,7 @@ public class BookController {
     }
 
     @PutMapping("/secure/renew/loan")
-    public void renewBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token) throws Exception {
-        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+    public void renewBook(@RequestParam Long bookId,@RequestHeader(value = "Authorization") String token,@RequestParam String userEmail) throws Exception {
         bookService.renewBook(userEmail, bookId);
     }
     @GetMapping("/secure/ischeckedout/byuser")

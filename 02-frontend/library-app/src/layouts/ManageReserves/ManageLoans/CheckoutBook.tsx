@@ -1,7 +1,7 @@
 import React from 'react'
 import BookCheckout from '../../../models/BookCheckout'
 
-export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any}> = (props) => {
+export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}> = (props) => {
 
   return (
     
@@ -49,7 +49,7 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any}> = (props
                         <div className="d-grid gap-2">
 
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Book</button>
-                            <button className="btn btn-primary" type="button" >Reniew Book</button>
+                            <button className="btn btn-secondary" type="button" onClick={()=> props.renew(props.book.bookId)}>Renew Book</button>
                         </div>
                     </div>
 
@@ -96,8 +96,8 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any}> = (props
 
                     <div className="p-2 ">
                         <div className="d-grid mt-2">
-                            <button className="btn btn-danger" type="button" onClick={() => props.returnBook(props.book.bookId)}>Delete Reserve</button>
-                            <button className="btn btn-primary" type="button" >Checkout</button>
+                            <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Boook</button>
+                            <button className="btn btn-secondary" type="button" onClick={()=>props.renew(props.book.bookId)}>Renew</button>
                         </div>
                     </div>
                 </div>
