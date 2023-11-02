@@ -1,8 +1,9 @@
 import React from 'react'
 import BookCheckout from '../../../models/BookCheckout'
-
-export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}> = (props) => {
-
+import 'react-toastify/dist/ReactToastify.css'; // import first
+import { ToastContainer, toast } from 'react-toastify';
+export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any, notify:any}> = (props) => {
+    
   return (
     
      <div className='mt-1 shadow p-3 mb-1 bg-body ' >
@@ -49,7 +50,8 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}
                         <div className="d-grid gap-2">
 
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Book</button>
-                            <button className="btn btn-secondary" type="button" onClick={()=> props.renew(props.book.bookId)}>Renew Book</button>
+                            <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
+                            <ToastContainer/>
                         </div>
                     </div>
 
@@ -92,12 +94,11 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}
                         </div>
 
                     </div>
-
-
                     <div className="p-2 ">
                         <div className="d-grid mt-2">
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Boook</button>
-                            <button className="btn btn-secondary" type="button" onClick={()=>props.renew(props.book.bookId)}>Renew</button>
+                            <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
+                            <ToastContainer/>
                         </div>
                     </div>
                 </div>

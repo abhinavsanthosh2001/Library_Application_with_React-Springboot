@@ -13,8 +13,6 @@ export const ManageReserves = () => {
   const [newFeature, setNewFeature] = useState(true)
   const [checkout, setCheckout] = useState(true)
 
-  const [initialRender, setInitialRender] = useState(true)
-
   const [search, setSearch] = useState("");
   const [flag, setFlag] = useState(false);
   const [warn, setWarn] = useState(false)
@@ -148,11 +146,11 @@ export const ManageReserves = () => {
         </nav>
         <div className='tab-content' id='nav-tabContent'>
           <div className='tab-pane fade ' id='nav-add-book' role='tabpanel' aria-labelledby='nav-add-book-tab'>
-           {newFeature && <CheckoutBooks initialRender={initialRender} setInitialRender={setInitialRender} numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
+           {newFeature && <CheckoutBooks numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} initialRender={false} setInitialRender={undefined} />}
           </div>
 
           <div className='tab-pane fade show active' id='nav-quantity' role='tabpanel' aria-labelledby='nav-quantity-tab'>
-            {checkout && <BookReservations initialRender={initialRender} setInitialRender={setInitialRender} numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
+            {checkout && <BookReservations numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
             
           </div>
         </div>

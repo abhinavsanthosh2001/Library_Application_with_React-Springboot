@@ -4,6 +4,13 @@ import CheckoutResponse from '../../../models/CheckoutResponse';
 import BookCheckout from '../../../models/BookCheckout';
 import { CheckoutBook } from './CheckoutBook';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
+import 'react-toastify/dist/ReactToastify.css'; // import first
+import { ToastContainer, toast } from 'react-toastify';
+import Toasts from '../Toasts';
+
+
+
+
 
 export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any, numberOfCheckedBook: number, checkedOut:any,newFeature:any,setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }>= (props) =>{
     const { authState } = useOktaAuth();
@@ -14,8 +21,13 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     const [render, setRender] = useState(false)
     const [firstRender,setFirstRender] = useState(true);
     const [isMorethanOneBook,setIsMorethanOneBook] = useState(false);
+    
+    
+    function notify1(){
+        console.log("commng here too.. for toast")
+        toast('Renewed Succesfully.');
 
-
+    }
     async function returnBook(bookId: number) {
 
         const url = `http://localhost:8080/api/admin/secure/return/?bookId=${bookId}&userEmail=${props.search}`;
@@ -35,7 +47,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     }
 
     async function renew(bookId: number) {
-        console.log("commng here too..")
+        console.log("commng here too renew")
         const url = `http://localhost:8080/api/admin/secure/renew/loan/?bookId=${bookId}&userEmail=${props.search}`;
                 const requestOptions = {
                     method: 'PUT',
@@ -48,19 +60,15 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                 if (!response.ok) {
                     throw new Error("Something Went Wrong!!")
                 }
+               
+
                 props.setUserFlag(!props.userFlag) 
                 setRender(!render)  
     }
     useEffect(() => {
         if (props.initialRender) {
-            console.log("hi")
             props.setInitialRender(false)
         }
-        else if(firstRender){
-            setFirstRender(false)
-        }
-            
-        
         else{
             if (props.search != "") {
                 const fetchBooks = async () => {
@@ -136,7 +144,6 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
         );
     }
   return (
-    
     <>
     <div className='mt-3'>
                  {isMorethanOneBook ? <h5>Number of CheckedBooks: ({totalAmountOfBooks})</h5>:
@@ -144,8 +151,10 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                 </div>
 
     {books.map(book => (
-                        <CheckoutBook book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
+        
+                        <CheckoutBook notify={notify1}  book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
                     ))}
+                    <ToastContainer />
     </>
   )
 }
