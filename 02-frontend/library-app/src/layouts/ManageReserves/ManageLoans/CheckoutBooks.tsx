@@ -5,15 +5,16 @@ import BookCheckout from '../../../models/BookCheckout';
 import { CheckoutBook } from './CheckoutBook';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
 
-
-
-export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any,newFeature:any,setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }>= (props) =>{
+export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any, numberOfCheckedBook: number, checkedOut:any,newFeature:any,setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }>= (props) =>{
     const { authState } = useOktaAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [books, setBooks] = useState<BookCheckout[]>([]);
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
     const [render, setRender] = useState(false)
+    const [firstRender,setFirstRender] = useState(true);
+    const [isMorethanOneBook,setIsMorethanOneBook] = useState(false);
+
 
     async function returnBook(bookId: number) {
 
@@ -51,7 +52,16 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
                 setRender(!render)  
     }
     useEffect(() => {
-       
+        if (props.initialRender) {
+            console.log("hi")
+            props.setInitialRender(false)
+        }
+        else if(firstRender){
+            setFirstRender(false)
+        }
+            
+        
+        else{
             if (props.search != "") {
                 const fetchBooks = async () => {
                     setIsLoading(true)
@@ -87,6 +97,7 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
                             })
                         }
                         if (loadedBooks.length > 0) {
+                            setIsMorethanOneBook(true)
                             props.setDisplayCard(true)
                         }else{
                             props.setDisplayCard(false)
@@ -109,9 +120,9 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
                 setTotalAmountOfBooks(-1)
             }
         
+        }
 
-
-    },[render,props.newFeature,props.checkedOut] );
+    },[render,props.newFeature,props.checkedOut,props.flag] );
     if (isLoading) {
         return (
             <SpinnerLoading></SpinnerLoading>
@@ -119,7 +130,7 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
     }
     if (httpError) {
         return (
-            <div className='contsiner m-5'>
+            <div className='container m-5'>
                 <p>{httpError}</p>
             </div>
         );
@@ -128,7 +139,8 @@ export const CheckoutBooks:React.FC<{numberOfCheckedBook: number, checkedOut:any
     
     <>
     <div className='mt-3'>
-                    <h5>Number of CheckedBooks: ({totalAmountOfBooks})</h5>
+                 {isMorethanOneBook ? <h5>Number of CheckedBooks: ({totalAmountOfBooks})</h5>:
+                 <div className='m-5'><h3>No Books found are linked with this email.</h3></div>}
                 </div>
 
     {books.map(book => (

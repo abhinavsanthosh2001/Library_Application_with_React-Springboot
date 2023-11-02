@@ -8,13 +8,12 @@ import UserCardModel from "../../../models/UserCardModel";
 import { numbers } from "@material/tooltip";
 
 
-export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
+export const BookReservations: React.FC<{initialRender:boolean, setInitialRender:any,numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
-    const [initialRender, setInitialRender] = useState(true)
     const [checkoutBooks, setCheckoutBooks] = useState<number[]>([])
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
     const [warnBooks, setWarnBooks] = useState(false)
@@ -149,8 +148,8 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
 
     }
     useEffect(() => {
-        if (initialRender) {
-            setInitialRender(false)
+        if (props.initialRender) {
+            props.setInitialRender(false)
         }
         else {
             if (props.search != "") {
@@ -210,10 +209,10 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
                 props.setWarn(true)
                 setTotalAmountOfBooks(-1)
             }
+        
         }
 
-
-    }, [props.flag]);
+    }, [props.flag,props.checkedOut,props.newFeature]);
 
     async function checkout(bookId: number) {
 
