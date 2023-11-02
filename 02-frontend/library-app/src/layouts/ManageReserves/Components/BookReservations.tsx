@@ -8,7 +8,7 @@ import UserCardModel from "../../../models/UserCardModel";
 import { numbers } from "@material/tooltip";
 
 
-export const BookReservations: React.FC<{numberOfCheckedBook: number, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
+export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [books, setBooks] = useState<CheckoutResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);

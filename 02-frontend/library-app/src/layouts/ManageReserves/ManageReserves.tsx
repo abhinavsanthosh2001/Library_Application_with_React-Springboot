@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 import { BookReservations } from './Components/BookReservations'
 import UserCardModel from '../../models/UserCardModel'
 import { UserCard } from './Components/UserCard'
+import { CheckoutBooks } from './ManageLoans/CheckoutBooks'
 
 
 
@@ -19,12 +20,7 @@ export const ManageReserves = () => {
   const [userData, setUserData] = useState<UserCardModel>()
   const [httpError, sethttpError] = useState(null);
   const [displayCard, setDisplayCard] = useState(false)
-  const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)
-
-
-
-
-
+  const [numberOfCheckedBook,setNumberOfCheckedBook] = useState(0)  
   useEffect(() => {
 
     if (search!="") {
@@ -62,7 +58,8 @@ export const ManageReserves = () => {
       })
     }
 
-  }, [userFlag]);
+  }, [userFlag,newFeature,checkout,]);
+
   function checkoutFunction() {
     setNewFeature(false)
     setCheckout(true)
@@ -123,9 +120,6 @@ export const ManageReserves = () => {
                   onClick={() => changeFlag()}>
                   Search
                 </button>
-
-
-
               </div>
             </div>
           </div>
@@ -144,7 +138,7 @@ export const ManageReserves = () => {
               Manage Reservations
             </button>
             <button onClick={() => returnsAndLoansFunction()} className='nav-link ' id='nav-add-book-tab' data-bs-toggle="tab" data-bs-target="#nav-add-book" type='button' role='tab' aria-controls='nav-add-book' aria-selected="false">
-              Add New Feature!
+              Manage Return books
             </button>
 
           </div>
@@ -152,13 +146,12 @@ export const ManageReserves = () => {
         </nav>
         <div className='tab-content' id='nav-tabContent'>
           <div className='tab-pane fade ' id='nav-add-book' role='tabpanel' aria-labelledby='nav-add-book-tab'>
-            <></>
-
+           {newFeature && <CheckoutBooks numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
           </div>
 
           <div className='tab-pane fade show active' id='nav-quantity' role='tabpanel' aria-labelledby='nav-quantity-tab'>
-            {checkout && <BookReservations numberOfCheckedBook={numberOfCheckedBook} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
-
+            {checkout && <BookReservations numberOfCheckedBook={numberOfCheckedBook} checkedOut={checkout} newFeature={newFeature} setNumberOfCheckedBook={setNumberOfCheckedBook} setDisplayCard={setDisplayCard} warn={warn} setWarn={setWarn} flag={flag} search={search} setSearch={setSearch} setFlag={setFlag} userFlag={userFlag} setUserFlag={setUserFlag} changeFlag={changeFlag} />}
+            
           </div>
         </div>
       </div>

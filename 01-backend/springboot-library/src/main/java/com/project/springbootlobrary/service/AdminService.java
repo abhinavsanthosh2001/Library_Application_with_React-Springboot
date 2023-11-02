@@ -9,6 +9,7 @@ import com.project.springbootlobrary.entities.Checkout;
 import com.project.springbootlobrary.entities.Reserve;
 import com.project.springbootlobrary.requestModels.AddBookRequest;
 import com.project.springbootlobrary.responseModels.CheckoutResponse;
+import com.project.springbootlobrary.responseModels.ReserveResponse;
 import com.project.springbootlobrary.responseModels.UserCard;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -17,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +53,20 @@ public class AdminService {
                 .build();
         bookRepo.save(book);
     }
+
+    public void renewBookByAdmin(String userEmail, Long bookId) throws Exception {
+        Checkout validateCheckout = checkoutRepo.findByUserEmailAndBookId(userEmail, bookId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assert validateCheckout != null;
+        Date returnDate = sdf.parse(validateCheckout.getReturnDate());
+        Date todayDate = sdf.parse(LocalDate.now().toString());
+        if(returnDate.compareTo(todayDate)>0 || returnDate.compareTo(todayDate)==0){
+            validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
+            checkoutRepo.save(validateCheckout);
+        }
+    }
+
+
 
     public void deleteBookById(Long bookId) {
         bookRepo.deleteById(bookId);
@@ -99,21 +116,42 @@ public class AdminService {
         return book.get();
 
     }
-    public List<CheckoutResponse> getReservesByEmail(String userEmail) {
+    public List<CheckoutResponse> getCheckoutsByEmail(String userEmail) {
+        List<Checkout> reserves = checkoutRepo.findBooksByUserEmail(userEmail);
+        List<CheckoutResponse> checkedBooks = new ArrayList<>();
+        reserves.forEach(reserve ->{
+            Optional<Book> bookOptional = bookRepo.findById(reserve.getBookId());
+            if(bookOptional.isPresent()){
+                Book checkedBook = bookOptional.get();
+                CheckoutResponse checkoutResponse = CheckoutResponse.builder()
+                        .title(checkedBook.getTitle())
+                        .bookId(checkedBook.getId())
+                        .author(checkedBook.getAuthor())
+                        .img(checkedBook.getImg())
+                        .userEmail(userEmail)
+                        .reservationDate(reserve.getCheckoutDate())
+                        .returnDate(reserve.getReturnDate())
+                        .build();
+                checkedBooks.add(checkoutResponse);
+            }
+        });
+        return checkedBooks;
+    }
+    public List<ReserveResponse> getReservesByEmail(String userEmail) {
         List<Reserve> reserves = reserveBookRepo.findByUserEmail(userEmail);
-        List<CheckoutResponse> reservedBooks = new ArrayList<>();
+        List<ReserveResponse> reservedBooks = new ArrayList<>();
         reserves.forEach(reserve -> {
             Optional<Book> bookOptional = bookRepo.findById(reserve.getBookId());
             if(bookOptional.isPresent()) {
                 Book reservedBook = bookOptional.get();
-                CheckoutResponse checkoutResponse = CheckoutResponse.builder()
+                ReserveResponse reserveResponse = ReserveResponse.builder()
                         .img(reservedBook.getImg())
                         .userEmail(userEmail)
                         .reservationDate(reserve.getReserveDate())
                         .author(reservedBook.getAuthor())
                         .bookId(reservedBook.getId()).title(reservedBook.getTitle())
                         .build();
-                reservedBooks.add(checkoutResponse);
+                reservedBooks.add(reserveResponse);
             }
 
         });
@@ -159,4 +197,6 @@ public class AdminService {
                 .historyCount(countHistoryByUserEmail)
                 .build();
     }
+
+
 }
