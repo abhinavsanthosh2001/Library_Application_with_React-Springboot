@@ -103,9 +103,7 @@ public class AdminController {
         String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
         if(admin == null || !admin.equals("admin")){
             throw new Exception("Administration page only.");
-
         }
-
         return adminService.getCheckoutsByEmail(userEmail);
     }
 
