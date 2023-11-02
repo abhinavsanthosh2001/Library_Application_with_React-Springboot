@@ -110,6 +110,7 @@ public class AdminService {
                 .bookId(bookId)
                 .checkoutDate(LocalDate.now().toString())
                 .returnDate(LocalDate.now().plusDays(7).toString())
+                .renewCount(0)
                 .build();
         checkoutRepo.save(checkout);
         return book.get();
