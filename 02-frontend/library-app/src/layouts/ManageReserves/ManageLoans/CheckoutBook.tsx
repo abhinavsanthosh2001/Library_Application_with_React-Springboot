@@ -1,6 +1,6 @@
 import React from 'react'
 import BookCheckout from '../../../models/BookCheckout'
-
+import 'react-toastify/dist/ReactToastify.css';
 export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}> = (props) => {
 
   return (
@@ -49,7 +49,7 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}
                         <div className="d-grid gap-2">
 
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Book</button>
-                            <button className="btn btn-secondary" type="button" onClick={()=> props.renew(props.book.bookId)}>Renew Book</button>
+                            <button className="btn btn-secondary" type="button" onClick={() => props.renew(props.book.bookId)}>Renew Book</button>
                         </div>
                     </div>
 
@@ -92,12 +92,10 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}
                         </div>
 
                     </div>
-
-
                     <div className="p-2 ">
                         <div className="d-grid mt-2">
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Boook</button>
-                            <button className="btn btn-secondary" type="button" onClick={()=>props.renew(props.book.bookId)}>Renew</button>
+                            <button className="btn btn-secondary" type="button" onClick={() =>props.renew(props.book.bookId)}>Renew Book</button>
                         </div>
                     </div>
                 </div>
