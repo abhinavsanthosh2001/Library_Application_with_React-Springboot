@@ -5,7 +5,6 @@ import { BookReservations } from './Components/BookReservations'
 import UserCardModel from '../../models/UserCardModel'
 import { UserCard } from './Components/UserCard'
 import { CheckoutBooks } from './ManageLoans/CheckoutBooks'
-import { toast } from 'react-toastify'
 
 
 
@@ -95,6 +94,16 @@ export const ManageReserves = () => {
   return (
     <div className='container'>
       <div className='mt-4'>
+        <div className='row mt-5'>
+          {
+            warn &&
+            <div className='alert alert-danger' role='alert'>
+              Please Enter User Email to get data.
+            </div>
+
+          }
+
+        </div>
         <div className='row'>
           <div className='col-6'>
             <div className='row'>
