@@ -4,7 +4,7 @@ import CheckoutResponse from '../../../models/CheckoutResponse';
 import BookCheckout from '../../../models/BookCheckout';
 import { CheckoutBook } from './CheckoutBook';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
-import 'react-toastify/dist/ReactToastify.css'; 
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 
 export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any, numberOfCheckedBook: number, checkedOut:any,newFeature:any,setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }>= (props) =>{
@@ -14,7 +14,6 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     const [httpError, sethttpError] = useState(null);
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
     const [render, setRender] = useState(false)
-    const [firstRender,setFirstRender] = useState(true);
     const [isMorethanOneBook,setIsMorethanOneBook] = useState(false);
 
 
@@ -37,7 +36,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     }
 
     async function renew(bookId: number) {
-        console.log("commng here too renew")
+        console.log("commng here too..")
         const url = `http://localhost:8080/api/admin/secure/renew/loan/?bookId=${bookId}&userEmail=${props.search}`;
                 const requestOptions = {
                     method: 'PUT',
@@ -51,7 +50,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                     throw new Error("Something Went Wrong!!")
                 }
                 toast.success('Renewed Sucess..!');
-                props.setUserFlag(!props.userFlag) 
+                props.setUserFlag(!props.userFlag)
                 setRender(!render)  
     }
     useEffect(() => {
@@ -141,10 +140,10 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                 </div>
 
     {books.map(book => (
-        
+
                         <CheckoutBook  book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
                     ))}
-                    
+
     </>
   )
 }
