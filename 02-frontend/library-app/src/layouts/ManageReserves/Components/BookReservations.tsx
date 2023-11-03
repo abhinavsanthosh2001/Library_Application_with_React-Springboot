@@ -14,8 +14,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
     const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(-1);
     const [checkoutBooks, setCheckoutBooks] = useState<number[]>([])
     const [checkedSelectAll, setCheckedSelectAll] = useState(false)
-    const [warnBooks, setWarnBooks] = useState(false)
-    const [success, setSuccess] = useState(false)
     const [totalCount, setTotalCount] = useState(0)
 
 
@@ -97,12 +95,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 <div className='mt-3'>
                     <h5>Number of reservations: ({totalAmountOfBooks})</h5>
                 </div>
-                {/* {
-                    warnBooks ? toast.error("Select at least one book"): <><div></div></>
-                } */}
-                {/* {
-                    success ? toast.success("Sucess"):<><div></div></>
-                } */}
                 <div className="p-2 m-1 align-self-center">
                     <div className="form-check checkbox-xl">
                         select all
@@ -132,11 +124,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         }
         else if (totalAmountOfBooks == 0) {
             return (<div className="m-5">
-                {/* {
-                    success ?
-                    toast.success("Sucess"):
-                    <><div></div></>
-                } */}
                 <h3>
                     No reservations found are linked with this email.
                 </h3>
@@ -215,7 +202,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
 
     async function checkout(bookId: number) {
         setIsLoading(true)
-        setSuccess(false)
         if (authState && authState?.isAuthenticated) {
             const url = `http://localhost:8080/api/admin/secure/checkout?userEmail=${props.search}&bookId=${bookId}`
             const options = {
@@ -234,8 +220,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
             props.setFlag(!props.flag);
             toast.success("Sucess")
             props.setUserFlag(!props.userFlag)
-            setSuccess(true)
-            setWarnBooks(false)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
@@ -243,14 +227,11 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
 
     async function checkoutAll(bookIds: number[]) {
 
-        setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
-            setWarnBooks(true)
             toast.warning("Select at least one book")
         }
         else {
-            setWarnBooks(false)
             if (authState && authState?.isAuthenticated) {
                 const url = `http://localhost:8080/api/admin/secure/checkout/bulk?userEmail=${props.search}`
                 const options = {
@@ -267,8 +248,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 if (!postMessage.ok) {
                     throw new Error("Something went wrong");
                 }
-                setSuccess(true)
-                toast.success("Sucess")
+                toast.success(`Checked ${bookIds.length} Books` )
                 props.setFlag(!props.flag);
                 props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
@@ -280,8 +260,6 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
 
     async function deleteReserve(bookId: number) {
         setIsLoading(true)
-        setSuccess(false)
-
         if (authState && authState?.isAuthenticated) {
             const url = `http://localhost:8080/api/admin/secure/deleteReserve?userEmail=${props.search}&bookId=${bookId}`
             const options = {
@@ -291,17 +269,13 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                     'Content-Type': 'application/json'
                 }
             };
-
             const postMessage = await fetch(url, options);
-
             if (!postMessage.ok) {
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
-            setSuccess(true)
-            toast.success("Sucess")
+            toast.warning("Deleted Reserved Book")
             props.setUserFlag(!props.userFlag)
-            setWarnBooks(false)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
