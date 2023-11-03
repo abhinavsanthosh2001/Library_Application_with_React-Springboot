@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
+import { toast } from "react-toastify";
 
 
 export const BookReservations: React.FC<{ initialRender: boolean, setInitialRender: any, numberOfCheckedBook: number, checkedOut: any, newFeature: any, setNumberOfCheckedBook: any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
@@ -55,7 +56,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         }
 
     }
-    function removeIfChecked(bookid: number) {        
+    function removeIfChecked(bookid: number) {
             let checkedBooksList = checkoutBooks
             const index = checkedBooksList.indexOf(bookid)
             if (index > -1) {
@@ -96,19 +97,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 <div className='mt-3'>
                     <h5>Number of reservations: ({totalAmountOfBooks})</h5>
                 </div>
-                {
-                    warnBooks &&
-                    <div className='alert alert-danger' role='alert'>
-                        Select at least one book
-                    </div>
 
-                }
-                {
-                    success &&
-                    <div className='alert alert-success' role='alert'>
-                        Success
-                    </div>
-                }
                 <div className="p-2 m-1 align-self-center">
                     <div className="form-check checkbox-xl">
                         select all
@@ -138,12 +127,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         }
         else if (totalAmountOfBooks == 0) {
             return (<div className="m-5">
-                {
-                    success &&
-                    <div className='alert alert-success' role='alert'>
-                        Success
-                    </div>
-                }
+
                 <h3>
                     No reservations found are linked with this email.
                 </h3>
@@ -239,9 +223,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
+            toast.success("Checked Oue Sucess..")
             props.setUserFlag(!props.userFlag)
-            setSuccess(true)
-            setWarnBooks(false)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
@@ -252,7 +235,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
-            setWarnBooks(true)
+
+            toast.warning("Select at least one book")
         }
         else {
             setWarnBooks(false)
@@ -272,7 +256,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 if (!postMessage.ok) {
                     throw new Error("Something went wrong");
                 }
-                setSuccess(true)
+
+                toast.success(`Checkedout ${bookIds.length} books`)
                 props.setFlag(!props.flag);
                 props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
@@ -302,9 +287,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
+            toast.warning(`Deleted From Reserved Book`)
             props.setUserFlag(!props.userFlag)
-            setWarnBooks(false)
-            setSuccess(true)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
