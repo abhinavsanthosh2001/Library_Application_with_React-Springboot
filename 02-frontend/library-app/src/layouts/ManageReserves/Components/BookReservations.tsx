@@ -97,12 +97,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 <div className='mt-3'>
                     <h5>Number of reservations: ({totalAmountOfBooks})</h5>
                 </div>
-                {/* {
-                    warnBooks ? toast.error("Select at least one book"): <><div></div></>
-                } */}
-                {/* {
-                    success ? toast.success("Sucess"):<><div></div></>
-                } */}
+
                 <div className="p-2 m-1 align-self-center">
                     <div className="form-check checkbox-xl">
                         select all
@@ -132,11 +127,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         }
         else if (totalAmountOfBooks == 0) {
             return (<div className="m-5">
-                {/* {
-                    success ?
-                    toast.success("Sucess"):
-                    <><div></div></>
-                } */}
+               
                 <h3>
                     No reservations found are linked with this email.
                 </h3>
@@ -232,10 +223,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
-            toast.success("Sucess")
+            toast.success("Checked Oue Sucess..")
             props.setUserFlag(!props.userFlag)
-            setSuccess(true)
-            setWarnBooks(false)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
@@ -246,7 +235,7 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
         setSuccess(false)
         setIsLoading(true)
         if (bookIds.length == 0) {
-            setWarnBooks(true)
+
             toast.warning("Select at least one book")
         }
         else {
@@ -267,8 +256,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 if (!postMessage.ok) {
                     throw new Error("Something went wrong");
                 }
-                setSuccess(true)
-                toast.success("Sucess")
+            
+                toast.success(`Checkedout ${bookIds.length} books`)
                 props.setFlag(!props.flag);
                 props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
@@ -298,10 +287,8 @@ export const BookReservations: React.FC<{ initialRender: boolean, setInitialRend
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
-            setSuccess(true)
-            toast.success("Sucess")
+            toast.warning(`Deleted From Reserved Book`)
             props.setUserFlag(!props.userFlag)
-            setWarnBooks(false)
             removeIfChecked(bookId)
         }
         setIsLoading(false)
