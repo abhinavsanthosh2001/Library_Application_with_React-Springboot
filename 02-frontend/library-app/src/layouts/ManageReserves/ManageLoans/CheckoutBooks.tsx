@@ -4,13 +4,8 @@ import CheckoutResponse from '../../../models/CheckoutResponse';
 import BookCheckout from '../../../models/BookCheckout';
 import { CheckoutBook } from './CheckoutBook';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
-import 'react-toastify/dist/ReactToastify.css'; // import first
+import 'react-toastify/dist/ReactToastify.css'; 
 import { ToastContainer, toast } from 'react-toastify';
-import Toasts from '../Toasts';
-
-
-
-
 
 export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any, numberOfCheckedBook: number, checkedOut:any,newFeature:any,setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }>= (props) =>{
     const { authState } = useOktaAuth();
@@ -21,15 +16,9 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
     const [render, setRender] = useState(false)
     const [firstRender,setFirstRender] = useState(true);
     const [isMorethanOneBook,setIsMorethanOneBook] = useState(false);
-    
-    
-    function notify1(){
-        console.log("commng here too.. for toast")
-        toast.success('Renewed Succesfully.');
 
-    }
+
     async function returnBook(bookId: number) {
-
         const url = `http://localhost:8080/api/admin/secure/return/?bookId=${bookId}&userEmail=${props.search}`;
                 const requestOptions = {
                     method: 'PUT',
@@ -42,6 +31,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                 if (!response.ok) {
                     throw new Error("Something Went Wrong!!")
                 }
+                toast.success('Returned Sucessfully..!')
                 setRender(!render)
                 props.setUserFlag(!props.userFlag) 
     }
@@ -60,8 +50,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
                 if (!response.ok) {
                     throw new Error("Something Went Wrong!!")
                 }
-               
-
+                toast.success('Renewed Sucess..!');
                 props.setUserFlag(!props.userFlag) 
                 setRender(!render)  
     }
@@ -125,6 +114,7 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
             }
             else {
                 props.setWarn(true)
+                toast.warn("Please Enter User Email to get data.")
                 setTotalAmountOfBooks(-1)
             }
         
@@ -152,9 +142,9 @@ export const CheckoutBooks:React.FC<{initialRender:boolean, setInitialRender:any
 
     {books.map(book => (
         
-                        <CheckoutBook notify={notify1}  book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
+                        <CheckoutBook  book={book} key={book.bookId} returnBook={returnBook} renew={renew}/>
                     ))}
-                    <ToastContainer />
+                    
     </>
   )
 }

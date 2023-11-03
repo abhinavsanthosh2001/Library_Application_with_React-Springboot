@@ -1,8 +1,7 @@
 import React from 'react'
 import BookCheckout from '../../../models/BookCheckout'
-import 'react-toastify/dist/ReactToastify.css'; // import first
-import { ToastContainer, toast } from 'react-toastify';
-export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any, notify:any}> = (props) => {
+import 'react-toastify/dist/ReactToastify.css'; 
+export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any}> = (props) => {
     
   return (
     
@@ -50,19 +49,7 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any,
                         <div className="d-grid gap-2">
 
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Book</button>
-                            <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
-                            <ToastContainer
-                                position="top-right"
-                                autoClose={2001}
-                                hideProgressBar={false}
-                                newestOnTop={false}
-                                closeOnClick
-                                rtl={false}
-                                pauseOnFocusLoss
-                                draggable
-                                pauseOnHover
-                                theme="light"
-                            />
+                            <button className="btn btn-secondary" type="button" onClick={() => props.renew(props.book.bookId)}>Renew Book</button>
                         </div>
                     </div>
 
@@ -108,19 +95,7 @@ export const CheckoutBook: React.FC<{book:BookCheckout,returnBook:any,renew:any,
                     <div className="p-2 ">
                         <div className="d-grid mt-2">
                             <button className="btn btn-primary" type="button" onClick={() => props.returnBook(props.book.bookId)}>Return Boook</button>
-                            <button className="btn btn-secondary" type="button" onClick={() =>{props.notify(); props.renew(props.book.bookId)}}>Renew Book</button>
-                            <ToastContainer
-position="top-right"
-autoClose={2001}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-/>
+                            <button className="btn btn-secondary" type="button" onClick={() =>props.renew(props.book.bookId)}>Renew Book</button>
                         </div>
                     </div>
                 </div>

@@ -11,17 +11,17 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
 <ToastContainer
-position="top-center"
-autoClose={1000}
-limit={2}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
+          position="top-center"
+          autoClose={1000}
+          limit={2}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
 />
     <App />
     

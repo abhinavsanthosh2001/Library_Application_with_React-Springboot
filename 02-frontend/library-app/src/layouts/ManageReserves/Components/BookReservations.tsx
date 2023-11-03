@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { BookReservation } from "./BookReservation";
 import CheckoutResponse from "../../../models/CheckoutResponse";
+import { toast } from "react-toastify";
 
 
 export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:any,newFeature:any, setNumberOfCheckedBook:any, setDisplayCard: any, search: string, setSearch: any, flag: boolean, setFlag: any, userFlag: boolean, setUserFlag: any, changeFlag: any, warn: boolean, setWarn: any }> = (props) => {
@@ -88,19 +89,12 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
                 <div className='mt-3'>
                     <h5>Number of reservations: ({totalAmountOfBooks})</h5>
                 </div>
-                {
-                    warnBooks &&
-                    <div className='alert alert-danger' role='alert'>
-                        Select at least one book
-                    </div>
-
-                }
-                {
-                    success &&
-                    <div className='alert alert-success' role='alert'>
-                        Success
-                    </div>
-                }
+                {/* {
+                    warnBooks ? toast.error("Select at least one book"): <><div></div></>
+                } */}
+                {/* {
+                    success ? toast.success("Sucess"):<><div></div></>
+                } */}
                 <div className="p-2 m-1 align-self-center">
                     <div className="form-check checkbox-xl">
                         select all
@@ -130,12 +124,11 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
         }
         else if (totalAmountOfBooks == 0) {
             return (<div className="m-5">
-                {
-                    success &&
-                    <div className='alert alert-success' role='alert'>
-                        Success
-                    </div>
-                }
+                {/* {
+                    success ?
+                    toast.success("Sucess"):
+                    <><div></div></>
+                } */}
                 <h3>
                     No reservations found are linked with this email.
                 </h3>
@@ -210,7 +203,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
         }
 
 
-    }, [props.flag]);
+    }, [props.flag,props.checkedOut,props.newFeature]);
 
     async function checkout(bookId: number) {
 
@@ -233,6 +226,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
                 throw new Error("Something went wrong");
             }
             props.setFlag(!props.flag);
+            toast.success("Sucess")
             setSuccess(true)
             setWarnBooks(false)
             props.setUserFlag(!props.userFlag)
@@ -248,6 +242,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
         setIsLoading(true)
         if (bookIds.length == 0) {
             setWarnBooks(true)
+            toast.warning("Select at least one book")
         }
         else {
             setWarnBooks(false)
@@ -268,6 +263,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
                     throw new Error("Something went wrong");
                 }
                 setSuccess(true)
+                toast.success("Sucess")
                 props.setFlag(!props.flag);
                 props.setUserFlag(!props.userFlag)
                 setCheckoutBooks([])
@@ -298,6 +294,7 @@ export const BookReservations: React.FC<{numberOfCheckedBook: number,checkedOut:
             }
             props.setFlag(!props.flag);
             setSuccess(true)
+            toast.success("Sucess")
             props.setUserFlag(!props.userFlag)
             setWarnBooks(false)
         }
