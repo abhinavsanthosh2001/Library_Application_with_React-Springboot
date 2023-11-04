@@ -2,7 +2,8 @@ import React, { useEffect, useState} from 'react'
 import BookModel from '../../models/BookModel';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import { StarReview } from '../Utils/StarReview';
-
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import ReviewModel from '../../models/ReviewModel';
 import { LatestReviews } from './LatestReviews';
 import { useOktaAuth } from '@okta/okta-react';
@@ -355,6 +356,8 @@ const BookCheckoutPage = () => {
             throw new Error('Something went wrong!');
         }
         setIsBooked(true);
+        toast.success("Reserved Successfully...")
+        
         
     }
    
