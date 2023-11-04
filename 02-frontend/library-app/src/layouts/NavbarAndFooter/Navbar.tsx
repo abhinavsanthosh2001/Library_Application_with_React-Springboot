@@ -45,28 +45,14 @@ export const Navbar = () => {
                 <Link type="button" className="btn btn-success" to='/login'>Sign In</Link>
               </li> :
               <>
-                {/* {authState.isAuthenticated && <li className="nav-item">
-                  <div className="container">
-                    <p className="lead"><b>{authState.accessToken?.claims.sub}</b></p>
-                  </div>
-
-                </li>} */}
-
-                {/* <li >
-                  <button type="button" className="btn btn-success" onClick={handleLogout}>Logout</button>
-                </li> */}
+                
                 <li className="mx-2">
                   <div className="dropdown">
                     <button data-initials="T" type="button" className="btn dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></button>
 
                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                      {/* <div className="container">
-                      <li>{authState.accessToken?.claims.sub}</li>
-                      <hr />  
-                      <li className="text-center"><button type="button" className="btn btn-success" onClick={handleLogout}>Logout</button>
-                      </li>
-                      </div> */}
-                      <ProfileDropdown></ProfileDropdown>
+                      
+                      <ProfileDropdown email={authState.accessToken?.claims.sub!} userType={authState.accessToken?.claims.userType == "admin"?"admin":"Member"} handleLogout={handleLogout}></ProfileDropdown>
                     </ul>
                   </div>
                 </li>
