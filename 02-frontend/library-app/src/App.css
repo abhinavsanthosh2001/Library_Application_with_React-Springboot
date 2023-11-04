@@ -68,3 +68,91 @@ background-color: #0e76a8 ;
   pointer-events: none;
   cursor: default;
 }
+
+[data-initials]:before {
+  background: #012637;
+  color: white;
+  opacity: 1; 
+  content: attr(data-initials); 
+  display: inline-block; 
+  font-weight: 600; 
+  border-radius: 50%; 
+  vertical-align: middle; 
+  margin-right: 0.5em; 
+  width: 50px; 
+  height: 50px; 
+  line-height: 50px; 
+  text-align: center; 
+  }
+ 
+  */
+  /*  */
+
+  .action .menu::before{
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: 28px;
+    width: 20px;
+    height: 20px;
+    background: #fefefe;
+    transform: rotate(45deg);
+  }
+
+  .action .menu{
+    top: 80px;
+    right: -10px;
+    padding: 10px 20px;
+    background: #fdfdfd;
+    width: 250px;
+    box-sizing: 0 5px 25px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    transition: 0.5s;
+    
+  }
+  .action .menu h3{
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    padding: 20px 0;
+    font-weight: 500;
+    color: #555;
+    line-height: 1.2em;
+  }
+  .action .menu h3 span{
+    font-size: 14px;
+    font-weight: 400;
+    color: #cecece;
+  }
+  .action .menu ul li{
+    list-style: none;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.705);
+    direction: flex;
+    align-items: center;
+  } 
+  .action .menu ul li img{
+    max-width: 20px;
+    margin-right: 10px;
+    opacity: 0.5;
+    transition: 0.5s;
+  }
+  .action .menu ul li:hover img{
+    opacity: 1;
+  }
+  .action .menu ul li a{
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: 0.5s;
+  }
+  .action .menu ul li:hover a{
+    color: #ff5d94;
+    cursor: pointer;
+  } 
+
+
+
+
+  
