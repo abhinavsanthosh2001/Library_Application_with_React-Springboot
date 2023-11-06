@@ -1,8 +1,11 @@
 package com.project.springbootlobrary.entities;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,32 +13,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Table(name = "reserve_books")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "checkout")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 @Builder
-public class Checkout {
+public class Reserve {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    long id;
+
+    @Column(name = "book_id")
+    long bookId;
 
     @Column(name = "user_email")
     String userEmail;
 
-    @Column(name = "checkout_date")
-    String checkoutDate;
+    @Column(name = "reserve_date")
+    String reserveDate;
 
-    @Column(name = "return_date")
-    String returnDate;
-
-    @Column(name = "book_id")
-    Long bookId;
-
-    @Column(name = "renew_count")
-    int renewCount;
-
+    @Column(name = "blocked")
+    Boolean blocked;
 }

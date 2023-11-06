@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import LoginWidget from "../../Auth/LoginWidget";
+import { ProfileDropdown } from "./ProfileDropdown";
 
 export const Navbar = () => {
   const { oktaAuth, authState } = useOktaAuth();
@@ -22,16 +23,19 @@ export const Navbar = () => {
             <li className="nav-item">
               <NavLink className="nav-link" to={"/home"}>Home</NavLink>
             </li>
-            <li className="nav-item">
+            {authState.isAuthenticated && authState.accessToken?.claims.userType !== "admin" && <li className="nav-item">
               <NavLink className="nav-link" to={"/search"}>Search</NavLink>
-            </li>
-            {authState.isAuthenticated && <li className="nav-item">
+            </li>}
+            {authState.isAuthenticated && authState.accessToken?.claims.userType !== "admin" && <li className="nav-item">
               <NavLink className="nav-link" to={"/shelf"}>Shelf</NavLink>
             </li>}
             {authState.accessToken?.claims.userType === "admin" && <li className="nav-item">
-              <NavLink className="nav-link" to={"/admin"}>Admin</NavLink>
+              <NavLink className="nav-link" to={"/admin/ml"}>Manage Books</NavLink>
             </li>}
-           
+            {authState.accessToken?.claims.userType === "admin" && <li className="nav-item">
+              <NavLink className="nav-link" to={"/admin/mrl"}>Issue/Return Books</NavLink>
+            </li>}
+
 
           </ul>
           <ul className='navbar-nav ms-auto'>
@@ -41,16 +45,18 @@ export const Navbar = () => {
                 <Link type="button" className="btn btn-success" to='/login'>Sign In</Link>
               </li> :
               <>
-               {authState.isAuthenticated && <li className="nav-item">
-                <div className="container">
-                <p className="lead"><b>{authState.accessToken?.claims.sub }</b></p>
-                </div>
-              
-             </li>}
+                
+                <li className="mx-2">
+                  <div className="dropdown">
+                    <button data-initials="T" type="button" className="btn dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></button>
 
-              <li >
-                <button type="button" className="btn btn-success" onClick={handleLogout}>Logout</button>
-              </li></>
+                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                      
+                      <ProfileDropdown email={authState.accessToken?.claims.sub!} userType={authState.accessToken?.claims.userType == "admin"?"admin":"Member"} handleLogout={handleLogout}></ProfileDropdown>
+                    </ul>
+                  </div>
+                </li>
+              </>
             }
           </ul>
 

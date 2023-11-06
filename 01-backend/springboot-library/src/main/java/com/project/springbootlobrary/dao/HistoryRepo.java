@@ -11,5 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface HistoryRepo extends JpaRepository<History, Long> {
 
     Page<History> findBooksByUserEmail(@RequestParam("email") String userEmail, Pageable pageable);
+    int countByUserEmail(String userEmail);
 
 }

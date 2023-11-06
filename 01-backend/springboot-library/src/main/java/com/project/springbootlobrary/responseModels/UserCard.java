@@ -1,19 +1,17 @@
 package com.project.springbootlobrary.responseModels;
-
-import com.project.springbootlobrary.entities.Book;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ShelfCurrentLoansResponse {
-    Book book;
-    int daysLeft;
-    boolean renewAllowed;
-
+public class UserCard {
+    String userEmail;
+    long checkedoutBooks;
+    long reservedBooks;
+    long historyCount;
 }

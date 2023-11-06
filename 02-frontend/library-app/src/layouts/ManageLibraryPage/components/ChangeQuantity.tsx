@@ -173,7 +173,7 @@ export const ChangeQuantity = () => {
                     <h3>
                         No Books present. Want to add a new book?
                     </h3>
-                    <Link type="button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white" to={"/admin"} >Add Book</Link>
+                    <Link type="button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white" to={"/admin/ml"} >Add Book</Link>
                 </div>}
             {totalPages > 1 &&
                 <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
